@@ -1,0 +1,30 @@
+# build output
+*.exe
+*.dll
+*.obj
+*.lib
+*.map
+*.res
+*.rsc
+*.FileList.xml
+obj/
+map/
+build.log
+*.log
+# clarion generated / scratch
+test/pages/
+test/shots/
+testapp/shots/
+testapp/bisect/
+testapp/*.clw
+testapp/*.CLW
+testapp/*.INC
+testapp/*.EXP
+testapp/*.shp
+testapp/*.bpp
+testapp/*.tps
+testapp/*.INI
+testapp/roundtrip.txa
+testapp/EmfPrvTest.app
+testapp/EmfPrvTest.dct
+test/*.INI

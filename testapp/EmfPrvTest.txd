@@ -1,0 +1,45 @@
+[DICTIONARY]
+VERSION '1.0'
+CREATED ' 3 SEP 2026' ' 9:00:00AM'
+MODIFIED ' 3 SEP 2026' ' 9:00:00AM'
+
+[FILES]
+
+Customers FILE,DRIVER('TOPSPEED'),NAME('customers.tps'),PRE(CUS),CREATE,BINDABLE,THREAD
+!!> IDENT(1),USAGE(File)
+IdKey KEY(CUS:Id),NOCASE,OPT,PRIMARY
+!!> IDENT(2)
+NameKey KEY(CUS:Name),DUP,NOCASE
+!!> IDENT(3)
+Record                   RECORD
+[SCREENCONTROLS]
+! PROMPT('Id:'),USE(?CUS:Id:Prompt)
+! ENTRY(@n_8),USE(CUS:Id),RIGHT(1)
+[REPORTCONTROLS]
+! STRING(@n_8),USE(CUS:Id),RIGHT(1)
+Id                         LONG
+!!> IDENT(4),PROMPT('Id:'),HEADER('Id'),PICTURE(@n_8),JUSTIFY(RIGHT,1)
+[SCREENCONTROLS]
+! PROMPT('Name:'),USE(?CUS:Name:Prompt)
+! ENTRY(@s60),USE(CUS:Name)
+[REPORTCONTROLS]
+! STRING(@s60),USE(CUS:Name)
+Name                       STRING(60)
+!!> IDENT(5),PROMPT('Name:'),HEADER('Name'),PICTURE(@s60)
+[SCREENCONTROLS]
+! PROMPT('City:'),USE(?CUS:City:Prompt)
+! ENTRY(@s40),USE(CUS:City)
+[REPORTCONTROLS]
+! STRING(@s40),USE(CUS:City)
+City                       STRING(40)
+!!> IDENT(6),PROMPT('City:'),HEADER('City'),PICTURE(@s40)
+[SCREENCONTROLS]
+! PROMPT('Amount:'),USE(?CUS:Amount:Prompt)
+! ENTRY(@n-14.2),USE(CUS:Amount),RIGHT(1)
+[REPORTCONTROLS]
+! STRING(@n-14.2),USE(CUS:Amount),RIGHT(1)
+Amount                     DECIMAL(11,2)
+!!> IDENT(7),PROMPT('Amount:'),HEADER('Amount'),PICTURE(@n-14.2),JUSTIFY(RIGHT,1)
+                         END
+                       END
+

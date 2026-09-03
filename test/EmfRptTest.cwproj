@@ -1,0 +1,30 @@
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ProjectGuid>{7A1B2C3D-0000-4000-8000-000000000002}</ProjectGuid>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">Win32</Platform>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>EmfRptTest</RootNamespace>
+    <AssemblyName>EmfRptTest</AssemblyName>
+    <OutputName>EmfRptTest</OutputName>
+    <DefineConstants>_ABCLinkMode_=&gt;1%3b_ABCDllMode_=&gt;0%3b_EmfPrvLinkMode_=&gt;1%3b_EmfPrvDllMode_=&gt;0</DefineConstants>
+    <CopyCore>True</CopyCore>
+    <stack_size>16384</stack_size>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <DebugSymbols>True</DebugSymbols>
+    <DebugType>Full</DebugType>
+    <vid>full</vid>
+    <warnings>on</warnings>
+    <GenerateMap>False</GenerateMap>
+    <check_stack>True</check_stack>
+    <check_index>True</check_index>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="EmfRptTest.clw" />
+  </ItemGroup>
+  <ItemGroup>
+    <FileDriver Include="DOS" />
+  </ItemGroup>
+  <Import Project="$(ClarionBinPath)\SoftVelocity.Build.Clarion.targets" />
+</Project>
