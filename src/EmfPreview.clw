@@ -1204,6 +1204,7 @@ i        LONG,AUTO
   PgW = ROUND(SELF.Index.Pages.FrameW * SELF.PxPerMil, 1)
   PgH = ROUND(SELF.Index.Pages.FrameH * SELF.PxPerMil, 1)
   SELF.RenderSeq += 1
+  SELF.PendV = -1
   F = SELF.RenderPage(SELF.CurrentPage, TRUE, TRUE)
   IF F = '' THEN F = SELF.Index.Pages.FileName.
   SELF.FeqPage{PROP:Text} = CLIP(F)
@@ -1333,6 +1334,8 @@ hwnd     LONG,AUTO
     IF YMils = 0 THEN Pos = 0.
     IF Pos > SI.nMax - SI.nPage THEN Pos = SI.nMax - SI.nPage.
     IF Pos < 0 THEN Pos = 0.
+    SELF.PendFromV = SI.nPos
+    SELF.PendV = Pos
     EmfPrv_SendMessage(hwnd, WM_VSCROLL, SB_THUMBPOSITION + BSHIFT(Pos, 16), 0)
   END
   SI.cbSize = SIZE(SI)
@@ -1392,9 +1395,17 @@ hwnd     LONG,AUTO
     END
     RETURN
   END
-  Pos = SI.nPos + Step
+  ! the control applies a THUMBPOSITION lazily: when it still reports the position
+  ! we scrolled FROM last time, continue from the position we asked for
+  IF SELF.PendV >= 0 AND SI.nPos = SELF.PendFromV
+    Pos = SELF.PendV + Step
+  ELSE
+    Pos = SI.nPos + Step
+  END
   IF Pos > MaxPos THEN Pos = MaxPos.
   IF Pos < 0 THEN Pos = 0.
+  SELF.PendFromV = SI.nPos
+  SELF.PendV = Pos
   EmfPrv_SendMessage(hwnd, WM_VSCROLL, SB_THUMBPOSITION + BSHIFT(Pos, 16), 0)
 
 EmfPreviewClass.UpdateStatus PROCEDURE()

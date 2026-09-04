@@ -154,6 +154,8 @@ RenderSeq               LONG,PROTECTED
 Dirty                   BYTE,PROTECTED
 WantHScroll             BYTE,PROTECTED
 WantVScroll             BYTE,PROTECTED
+PendV                   LONG(-1),PROTECTED   ! vertical position last requested (the IMAGE applies WM_VSCROLL lazily)
+PendFromV               LONG,PROTECTED       ! ... and the position it was requested from
 HintText                CSTRING(200)      ! status bar zone 1; '' = default hint
 InAutoTest              BYTE
 ! ---- field equates (PROTECTED so a derived class can drive the window) ------
