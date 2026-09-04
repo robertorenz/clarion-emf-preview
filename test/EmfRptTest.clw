@@ -37,6 +37,8 @@
       tp_PrintWindow(LONG,LONG,ULONG),LONG,PASCAL,PROC,NAME('PrintWindow')
       tp_GetDIBits(LONG,LONG,ULONG,ULONG,LONG,LONG,ULONG),LONG,PASCAL,PROC,NAME('GetDIBits')
       tp_GetWindowRect(LONG,LONG),LONG,PASCAL,PROC,NAME('GetWindowRect')
+      tp_PostMessageA(LONG,ULONG,LONG,LONG),LONG,PASCAL,PROC,NAME('PostMessageA')
+      tp_GetScrollInfo(LONG,LONG,LONG),LONG,PASCAL,PROC,NAME('GetScrollInfo')
       tp_GetWindowLongA(LONG,LONG),LONG,PASCAL,NAME('GetWindowLongA')
       tp_GetClientRect(LONG,LONG),LONG,PASCAL,PROC,NAME('GetClientRect')
       tp_BitBlt(LONG,LONG,LONG,LONG,LONG,LONG,LONG,LONG,ULONG),LONG,PASCAL,PROC,NAME('BitBlt')
@@ -372,6 +374,15 @@ T        LONG
 Rt       LONG
 B        LONG
        END
+SI     GROUP
+cbSize   ULONG
+fMask    ULONG
+nMin     LONG
+nMax     LONG
+nPage    ULONG
+nPos     LONG
+nTrack   LONG
+       END
   CODE
   SELF.Step += 1
   CASE SELF.Step
@@ -405,10 +416,23 @@ B        LONG
     SELF.SetZoom(150)
   OF 7
     SELF.Shot('05_zoom150')
+    ! Ctrl+wheel up posted to the page image (the control under the cursor) -> zoom step
+    tp_GetWindowRect(SELF.FeqPage{PROP:Handle}, ADDRESS(Rc))
+    tp_PostMessageA(SELF.FeqPage{PROP:Handle}, 020Ah, 8 + BSHIFT(120, 16), BAND(Rc.L + 100, 0FFFFh) + BSHIFT(Rc.T + 100, 16))
+  OF 8
+    Log('  autotest: Ctrl+wheel via hook -> zoom now ' & SELF.ZoomPct & '% (expected 175)')
+    ! plain wheel down x2 posted to the search ENTRY (has focus) -> page scroll
+    tp_PostMessageA(SELF.FeqSearch{PROP:Handle}, 020Ah, BSHIFT(-120, 16), BAND(Rc.L + 100, 0FFFFh) + BSHIFT(Rc.T + 100, 16))
+    tp_PostMessageA(SELF.FeqSearch{PROP:Handle}, 020Ah, BSHIFT(-120, 16), BAND(Rc.L + 100, 0FFFFh) + BSHIFT(Rc.T + 100, 16))
+  OF 9
+    SI.cbSize = SIZE(SI)
+    SI.fMask = 17h
+    tp_GetScrollInfo(SELF.FeqPage{PROP:Handle}, 1, ADDRESS(SI))
+    Log('  autotest: plain wheel x2 via hook -> vertical scroll pos ' & SI.nPos & ' (expected 240)')
     SELF.GotoPage(3)
     SELF.SearchText = U'東京'
     POST(EVENT:Accepted, SELF.FeqSearch)
-  OF 8
+  OF 10
     Log('  autotest: search Tokyo (CJK) -> ' & RECORDS(SELF.Hits) & ' hits, current ' & SELF.CurHit & ' page ' & SELF.CurrentPage)
     SELF.Shot('06_search_cjk')
     ! simulate a left click on the first detail row name cell of the current page:
@@ -418,14 +442,14 @@ B        LONG
     YPix = SELF.FeqPage{PROP:YPos} + 950 * SELF.PxPerMil
     SELF.ToggleMarkAt(XPix, YPix)
     Log('  autotest: click-mark at ' & XPix & ',' & YPix & ' -> marks=' & RECORDS(SELF.Marks))
-  OF 9
+  OF 11
     SELF.Shot('07_clickmark')
     SELF.ShowSidebar = 0
     POST(EVENT:Accepted, SELF.FeqSidebar)
-  OF 10
+  OF 12
     SELF.Shot('08_nosidebar_fit')
     SELF.SetZoom(EmfPrv:Zoom:FitPage)
-  OF 11
+  OF 13
     SELF.Shot('09_fitpage')
     POST(EVENT:CloseWindow)
   END

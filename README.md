@@ -10,7 +10,7 @@ AppGen template, written for **Clarion 12 Unicode** (`C:\Clarion12unicode`, buil
 | Zoom | menu | fit width / fit page / 25‥500 %, Ctrl+wheel, Ctrl +/− |
 | Search | – | **full-text search** over every page (Unicode, case option), F3 / Shift+F3, hit counter per page, exact **highlight of the matched text** with the current hit framed |
 | Marks | – | **mark text** (click a line, or "Mark hits"), **mark pages** (Ctrl+M, right-click a thumbnail), print only the marked pages, print pages **with their text marks** |
-| Wheel | – | scrolls the page (window subclass), flips pages at the ends, Ctrl = zoom, over the sidebar = thumbnails |
+| Wheel | – | scrolls the page, flips pages at the ends, **Ctrl+wheel = zoom**, over the sidebar = thumbnails (per-thread `WH_GETMESSAGE` hook — Windows sends the wheel to the control under the cursor and Clarion's control procs swallow it) |
 | Save As / target selector | yes | yes (inherited) |
 
 ## What was learned about the new report engine (Clarion 12 Unicode)

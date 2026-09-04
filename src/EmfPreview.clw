@@ -4,7 +4,7 @@
 !==============================================================================
   MEMBER
   MAP
-    EmfPrv_WndProc(UNSIGNED hWnd, UNSIGNED wMsg, UNSIGNED wParam, LONG lParam),LONG,PASCAL
+    EmfPrv_GetMsgHook(LONG nCode, UNSIGNED wParam, LONG lParam),LONG,PASCAL
     EmfPrv_RegFind(LONG hWnd),BYTE
     EmfPrv_LoWord(LONG Value),LONG
     EmfPrv_HiWord(LONG Value),LONG
@@ -31,7 +31,10 @@
       EmfPrv_GetTextExtentPoint32W(LONG,LONG,LONG,LONG),LONG,PASCAL,PROC,NAME('GetTextExtentPoint32W')
       EmfPrv_GetScrollInfo(LONG,LONG,LONG),LONG,PASCAL,PROC,NAME('GetScrollInfo')
       EmfPrv_SendMessage(LONG,ULONG,LONG,LONG),LONG,PASCAL,PROC,NAME('SendMessageA')
-      EmfPrv_CallWindowProc(LONG,UNSIGNED,UNSIGNED,UNSIGNED,LONG),LONG,PASCAL,NAME('CallWindowProcA')
+      EmfPrv_SetWindowsHookExA(LONG,LONG,LONG,ULONG),LONG,PASCAL,NAME('SetWindowsHookExA')
+      EmfPrv_UnhookWindowsHookEx(LONG),LONG,PASCAL,PROC,NAME('UnhookWindowsHookEx')
+      EmfPrv_CallNextHookEx(LONG,LONG,UNSIGNED,LONG),LONG,PASCAL,NAME('CallNextHookEx')
+      EmfPrv_GetAncestor(LONG,ULONG),LONG,PASCAL,NAME('GetAncestor')
       EmfPrv_GetSystemMetrics(LONG),LONG,PASCAL,NAME('GetSystemMetrics')
       EmfPrv_ScreenToClient(LONG,LONG),LONG,PASCAL,PROC,NAME('ScreenToClient')
       EmfPrv_CreateFileW(LONG,ULONG,ULONG,LONG,ULONG,ULONG,LONG),LONG,PASCAL,NAME('CreateFileW')
@@ -119,14 +122,24 @@ B                       LONG
                       END
 
 ! registry of open preview windows (frame + client hwnd -> previewer), used by
-! the window subclass to route WM_MOUSEWHEEL.  Plain module data guarded by a
-! critical section - THREADed module data crashes the C12U runtime at startup.
+! the WH_GETMESSAGE hook to route WM_MOUSEWHEEL (the wheel goes to the control
+! under the cursor / with focus, whose Clarion proc swallows it).  Plain module
+! data guarded by a critical section - THREADed module data crashes at startup.
 EmfPrvRegQ            QUEUE
 Hwnd                    LONG
 ClientHwnd              LONG
-OldProc                 LONG
-OldClientProc           LONG
+Hook                    LONG
 Prv                     &EmfPreviewClass
+                      END
+
+MsgGrp                GROUP,TYPE          ! Win32 MSG
+hwnd                    LONG
+message                 ULONG
+wParam                  LONG
+lParam                  LONG
+time                    ULONG
+ptX                     LONG
+ptY                     LONG
                       END
 EmfPrvRegCS           &ICriticalSection
 
@@ -169,35 +182,39 @@ i   LONG,AUTO
   CLEAR(EmfPrvRegQ)
   RETURN FALSE
 
-! window subclass: mouse wheel -> the previewer that owns the window
-EmfPrv_WndProc PROCEDURE(UNSIGNED hWnd, UNSIGNED wMsg, UNSIGNED wParam, LONG lParam)
+! per-thread WH_GETMESSAGE hook: WM_MOUSEWHEEL for any control of a registered
+! preview window goes to that previewer and is swallowed (message -> WM_NULL)
+EmfPrv_GetMsgHook PROCEDURE(LONG nCode, UNSIGNED wParam, LONG lParam)
+M    LIKE(MsgGrp)
 Pt   GROUP
 X      LONG
 Y      LONG
      END
-Old  LONG,AUTO
+Root LONG,AUTO
+Hook LONG
 Prv  &EmfPreviewClass
-Cli  LONG,AUTO
   CODE
-  IF NOT EmfPrv_RegFind(hWnd) THEN RETURN 0.
-  Prv &= EmfPrvRegQ.Prv
-  Cli = EmfPrvRegQ.ClientHwnd
-  IF hWnd = Cli
-    Old = EmfPrvRegQ.OldClientProc
-  ELSE
-    Old = EmfPrvRegQ.OldProc
-  END
-  IF wMsg = WM_MOUSEWHEEL AND NOT Prv &= NULL
-    Pt.X = EmfPrv_LoWord(lParam)
-    IF Pt.X >= 8000H THEN Pt.X -= 10000H.
-    Pt.Y = EmfPrv_HiWord(lParam)
-    EmfPrv_ScreenToClient(Cli, ADDRESS(Pt))
-    IF Prv.TakeWheel(EmfPrv_HiWord(wParam), EmfPrv_LoWord(wParam), Pt.X, Pt.Y)
-      RETURN 0
+  IF nCode = 0 AND BAND(wParam, 1) AND lParam <> 0            ! HC_ACTION, PM_REMOVE (PeekMessage adds PM_QS_* bits)
+    PEEK(lParam, M)
+    IF M.message = WM_MOUSEWHEEL
+      Root = EmfPrv_GetAncestor(M.hwnd, 2)                  ! GA_ROOT
+      IF EmfPrv_RegFind(Root)
+        Prv &= EmfPrvRegQ.Prv
+        Hook = EmfPrvRegQ.Hook
+        IF NOT Prv &= NULL
+          Pt.X = M.ptX
+          Pt.Y = M.ptY
+          EmfPrv_ScreenToClient(EmfPrvRegQ.ClientHwnd, ADDRESS(Pt))
+          IF Prv.TakeWheel(EmfPrv_HiWord(M.wParam), EmfPrv_LoWord(M.wParam), Pt.X, Pt.Y)
+            M.message = 0                                   ! WM_NULL: nobody else sees it
+            POKE(lParam, M)
+          END
+        END
+        RETURN EmfPrv_CallNextHookEx(Hook, nCode, wParam, lParam)
+      END
     END
   END
-  IF Old = 0 THEN RETURN 0.
-  RETURN EmfPrv_CallWindowProc(Old, hWnd, wMsg, wParam, lParam)
+  RETURN EmfPrv_CallNextHookEx(0, nCode, wParam, lParam)
 
 !==============================================================================
 ! EmfTextIndexClass
@@ -625,10 +642,9 @@ PreviewWindow WINDOW('Report Preview'),AT(,,700,440),CENTER,ICON(ICON:Print),GRA
 
   SELF.Ask()
 
-  ! un-subclass and forget the window
+  ! remove the wheel hook and forget the window
   IF EmfPrv_RegFind(SELF.Win{PROP:Handle})
-    IF EmfPrvRegQ.OldProc THEN SELF.Win{PROP:WndProc} = EmfPrvRegQ.OldProc.
-    IF EmfPrvRegQ.OldClientProc THEN SELF.Win{PROP:ClientWndProc} = EmfPrvRegQ.OldClientProc.
+    IF EmfPrvRegQ.Hook THEN EmfPrv_UnhookWindowsHookEx(EmfPrvRegQ.Hook).
     EmfPrvRegCS.Wait()
     DELETE(EmfPrvRegQ)
     EmfPrvRegCS.Release()
@@ -663,20 +679,17 @@ EmfPreviewClass.Open PROCEDURE()
   ! reference device scale: metafile logical pixels per 1/1000 inch at 100%
   SELF.RefPxPerMilX = 0.096
   SELF.RefPxPerMilY = 0.096
-  ! mouse wheel: subclass frame + client window, remember who owns them
+  ! mouse wheel: a WH_GETMESSAGE hook on this thread, registry row = who owns the window
   IF EmfPrvRegCS &= NULL THEN EmfPrvRegCS &= NewCriticalSection().
   EmfPrvRegCS.Wait()
   CLEAR(EmfPrvRegQ)
   EmfPrvRegQ.Hwnd = SELF.Win{PROP:Handle}
   EmfPrvRegQ.ClientHwnd = SELF.Win{PROP:ClientHandle}
-  EmfPrvRegQ.OldProc = SELF.Win{PROP:WndProc}
-  EmfPrvRegQ.OldClientProc = SELF.Win{PROP:ClientWndProc}
   EmfPrvRegQ.Prv &= SELF
+  EmfPrvRegQ.Hook = EmfPrv_SetWindowsHookExA(3, ADDRESS(EmfPrv_GetMsgHook), 0, EmfPrv_GetCurrentThreadId())   ! WH_GETMESSAGE
   ADD(EmfPrvRegQ)
   EmfPrvRegCS.Release()
-  SELF.OldWndProc = EmfPrvRegQ.OldProc
-  SELF.Win{PROP:WndProc} = ADDRESS(EmfPrv_WndProc)
-  SELF.Win{PROP:ClientWndProc} = ADDRESS(EmfPrv_WndProc)
+  SELF.OldWndProc = EmfPrvRegQ.Hook
 
   SELF.Layout()
   SELF.ShowPage()
