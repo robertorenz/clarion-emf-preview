@@ -1210,7 +1210,10 @@ i        LONG,AUTO
   SELF.FeqPage{PROP:Text} = CLIP(F)
   SELF.FeqPage{PROP:MaxWidth} = PgW
   SELF.FeqPage{PROP:MaxHeight} = PgH
-  ! the scroll bars only take effect once an image is loaded
+  ! the scroll bars only take effect once an image is loaded, and the scroll
+  ! range is only recomputed when the flags change: off, then on
+  SELF.FeqPage{PROP:HScroll} = FALSE
+  SELF.FeqPage{PROP:VScroll} = FALSE
   SELF.FeqPage{PROP:HScroll} = SELF.WantHScroll
   SELF.FeqPage{PROP:VScroll} = SELF.WantVScroll
   UNHIDE(SELF.FeqPaper)

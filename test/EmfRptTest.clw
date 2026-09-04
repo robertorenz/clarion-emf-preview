@@ -50,6 +50,7 @@ TestPreview CLASS(EmfPreviewClass),TYPE
 Step          LONG
 ShotDir       CSTRING(261)
 TakeTimer     PROCEDURE(),VIRTUAL
+TakeWheel     PROCEDURE(LONG Delta, LONG Keys, LONG XPix, LONG YPix),LONG,VIRTUAL
 Shot          PROCEDURE(STRING Name)
             END
 
@@ -428,11 +429,18 @@ nTrack   LONG
     SI.cbSize = SIZE(SI)
     SI.fMask = 17h
     tp_GetScrollInfo(SELF.FeqPage{PROP:Handle}, 1, ADDRESS(SI))
-    Log('  autotest: plain wheel x2 via hook -> vertical scroll pos ' & SI.nPos & ' (expected 240)')
+    Log('  autotest: plain wheel x2 (same tick) via hook -> page ' & SELF.CurrentPage & ' vertical scroll pos ' & SI.nPos & ' max=' & SI.nMax & ' (expected 240 at the top of the page; a notch at the bottom edge flips to the next page)')
+    tp_GetWindowRect(SELF.FeqPage{PROP:Handle}, ADDRESS(Rc))
+    tp_PostMessageA(SELF.FeqPage{PROP:Handle}, 020Ah, BSHIFT(-120, 16), BAND(Rc.L + 100, 0FFFFh) + BSHIFT(Rc.T + 100, 16))
+  OF 10
+    SI.cbSize = SIZE(SI)
+    SI.fMask = 17h
+    tp_GetScrollInfo(SELF.FeqPage{PROP:Handle}, 1, ADDRESS(SI))
+    Log('  autotest: one more notch next tick -> vertical scroll pos ' & SI.nPos & ' (expected 240) max=' & SI.nMax & ' (expected ~1852 at 175%)')
     SELF.GotoPage(3)
     SELF.SearchText = U'東京'
     POST(EVENT:Accepted, SELF.FeqSearch)
-  OF 10
+  OF 11
     Log('  autotest: search Tokyo (CJK) -> ' & RECORDS(SELF.Hits) & ' hits, current ' & SELF.CurHit & ' page ' & SELF.CurrentPage)
     SELF.Shot('06_search_cjk')
     ! simulate a left click on the first detail row name cell of the current page:
@@ -442,17 +450,36 @@ nTrack   LONG
     YPix = SELF.FeqPage{PROP:YPos} + 950 * SELF.PxPerMil
     SELF.ToggleMarkAt(XPix, YPix)
     Log('  autotest: click-mark at ' & XPix & ',' & YPix & ' -> marks=' & RECORDS(SELF.Marks))
-  OF 11
+  OF 12
     SELF.Shot('07_clickmark')
     SELF.ShowSidebar = 0
     POST(EVENT:Accepted, SELF.FeqSidebar)
-  OF 12
+  OF 13
     SELF.Shot('08_nosidebar_fit')
     SELF.SetZoom(EmfPrv:Zoom:FitPage)
-  OF 13
+  OF 14
     SELF.Shot('09_fitpage')
     POST(EVENT:CloseWindow)
   END
+
+TestPreview.TakeWheel PROCEDURE(LONG Delta, LONG Keys, LONG XPix, LONG YPix)
+SI     GROUP
+cbSize   ULONG
+fMask    ULONG
+nMin     LONG
+nMax     LONG
+nPage    ULONG
+nPos     LONG
+nTrack   LONG
+       END
+rc     LONG
+  CODE
+  SI.cbSize = SIZE(SI)
+  SI.fMask = 17h
+  tp_GetScrollInfo(SELF.FeqPage{PROP:Handle}, 1, ADDRESS(SI))
+  rc = PARENT.TakeWheel(Delta, Keys, XPix, YPix)
+  Log('  wheel: delta=' & Delta & ' keys=' & Keys & ' at ' & XPix & ',' & YPix & ' pos before=' & SI.nPos & ' max=' & SI.nMax & ' page=' & SI.nPage & ' -> handled=' & rc & ' zoom=' & SELF.ZoomPct)
+  RETURN rc
 
 TestPreview.Shot PROCEDURE(STRING Name)
   CODE
