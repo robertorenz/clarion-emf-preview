@@ -8,7 +8,8 @@
 #!   WMFDocumentParser / IReportGeneratorW wide lane.
 #!
 #! Requires Clarion 12 Unicode.  Class sources: EmfPreview.inc / EmfPreview.clw
-#! (category EMFPRV -> project defines _EmfPrvLinkMode_ / _EmfPrvDllMode_).
+#! (always linked into the module that uses them - no DLL-mode defines, so a
+#! leftover reference after removing the template still compiles and runs).
 #!----------------------------------------------------------------------------
 #!
 #!============================================================================
@@ -43,22 +44,28 @@
     #PROMPT('Page area &background:',COLOR),%EmfPrvPaperShadow,DEFAULT(5854802)
     #PROMPT('&Sidebar background:',COLOR),%EmfPrvSidebarColor,DEFAULT(16118254)
   #ENDTAB
-  #TAB('Multi-DLL')
-    #DISPLAY('Where the EmfPreview class code lives (category EMFPRV).')
-    #DISPLAY('Defaults follow the application''s External setting.')
-    #INSERT(%AbcLibraryPrompts(ABC))
+  #TAB('Removing')
+    #DISPLAY('To take the template out of an application again:')
+    #DISPLAY('  1. tick "Disable this template" on the General tab,')
+    #DISPLAY('  2. generate once (the global Print Previewer class is')
+    #DISPLAY('     put back to PrintPreviewClass),')
+    #DISPLAY('  3. delete the extension and generate again.')
+    #DISPLAY('')
+    #DISPLAY('The class is always linked into every module that uses it,')
+    #DISPLAY('so a leftover reference compiles and runs (no DLL-mode defines).')
   #ENDTAB
 #ENDSHEET
 #!
+#! The class swap is the global ABC "Print Previewer" default class.  It is set
+#! for generation and restored to PrintPreviewClass when the template is
+#! disabled or the replacement is switched off, so the value the app keeps is
+#! always consistent with the extension's settings.
 #ATSTART
   #IF(NOT %EmfPrvDisable AND %EmfPrvReplaceAll)
     #SET(%PrintPreviewType,'EmfPreviewClass')
+  #ELSIF(%PrintPreviewType = 'EmfPreviewClass')
+    #SET(%PrintPreviewType,'PrintPreviewClass')
   #ENDIF
-#ENDAT
-#!
-#AT(%BeforeGenerateApplication),WHERE(NOT %EmfPrvDisable)
-  #CALL(%AddCategory(ABC),'EMFPRV')
-  #CALL(%SetCategoryLocationFromPrompts(ABC),'EMFPRV','EmfPrv','')
 #ENDAT
 #!
 #AT(%AfterGlobalIncludes),WHERE(NOT %EmfPrvDisable)

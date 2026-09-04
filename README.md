@@ -29,9 +29,9 @@ AppGen template, written for **Clarion 12 Unicode** (`C:\Clarion12unicode`, buil
 * Highlights are drawn with `SetROP2(R2_MASKPEN)` — a real marker-pen effect that keeps black text black.
 * Unicode gotchas: `TOANSI(u, 0FDE9h)` (UTF-8) must be *assigned* to a STRING first — inside a `&` concatenation the
   expression is evaluated wide and narrowed through the ANSI code page. `UPPER`/`INSTRING` are Unicode-aware on `USTRING`.
-* Runtime gotchas: `THREAD`ed module-level data in a class module crashes at start-up in this build; classes with
-  `LINK(…,_xLinkMode_),DLL(_xDllMode_)` **must** get both defines from the project (`%AddCategory` does it for
-  generated apps; hand-coded projects need `_EmfPrvLinkMode_=>1;_EmfPrvDllMode_=>0` in `DefineConstants`).
+* Runtime gotchas: `THREAD`ed module-level data in a class module crashes at start-up in this build; a class with
+  `DLL(_xDllMode_)` whose define is missing from the project GPFs on first use (garbage VMT) — EmfPreview therefore
+  links unconditionally (`LINK('EmfPreview.CLW')`, no DLL-mode parameters; each module carries its own copy).
 
 ## Layout
 
@@ -51,11 +51,21 @@ powershell -ExecutionPolicy Bypass -File install.ps1            # default C:\Cla
 ```
 Restart the IDE if it was open (the registry is only read at start-up).
 
+## Removing the template from an application
+
+The extension sets the app's global *Print Previewer* class (`%PrintPreviewType`) to `EmfPreviewClass`, and
+Clarion saves that value with the .app. To remove cleanly: tick **Disable this template** on the extension,
+**generate once** (the value is put back to `PrintPreviewClass`), then delete the extension and generate again.
+If the extension was deleted first, either re-add it and follow the steps, or set *Global Properties → Classes →
+Report → Print Previewer* back to `PrintPreviewClass` by hand. Since v1.1 the class is always linked into the module
+that uses it (no DLL-mode defines), so a leftover reference compiles and runs instead of GPFing.
+
 ## Use in an application
 
 1. Global Extensions → **EMF Unicode Previewer – Global (activate)**. With *Replace the previewer in every report
    procedure* (default on) the ABC `Previewer` object of every Report procedure becomes `EmfPreviewClass`
    (the template sets the global *Print Previewer* class). Defaults for sidebar, zoom, colours, wheel, marks live here.
+   Multi-DLL suites: add it to every app; each module links its own copy of the class.
 2. Optional, per report: extension **EMF Unicode Previewer – Report options** — window title, override the global
    options, or *uncheck Use* to fall back to the classic ABC preview window for that report (`ClassicMode`).
 3. Give the report the **Unicode** attribute for exact wide text (`REPORT,…,UNICODE`). Classic `.wmf` reports work too

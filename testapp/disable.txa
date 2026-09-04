@@ -1,0 +1,171 @@
+[APPLICATION]
+VERSION 34
+TODO ABC ToDo
+DICTIONARY 'disable.dct'
+PROCEDURE PrintCustomers
+[COMMON]
+FROM ABC
+MODIFIED '2026/09/03' '09:00:00'
+[PROMPTS]
+%ProgramAuthor DEFAULT  ('EmfPreview test')
+%GlobalExternal LONG  (0)
+%ExternalSource DEFAULT  ('Dynamic Link Library (DLL)')
+%GenerateEmbedComments LONG  (0)
+%INIType DEFAULT  ('NVD_INI')
+%INIFile DEFAULT  ('Program Name.INI')
+%INIInAppDirectory LONG  (1)
+%EnableRunTimeTranslator LONG  (0)
+%GlobalUseABCClasess LONG  (1)
+%PrintPreviewType DEFAULT  ('EmfPreviewClass')
+[ADDITION]
+NAME EmfPreview EmfPreviewGlobal
+[INSTANCE]
+INSTANCE 1
+[PROMPTS]
+%EmfPrvDisable LONG  (1)
+%EmfPrvReplaceAll LONG  (1)
+%EmfPrvSidebar LONG  (1)
+%EmfPrvSidebarWidth LONG  (190)
+%EmfPrvZoom DEFAULT  ('Fit width')
+%EmfPrvClickMarks LONG  (1)
+%EmfPrvPrintMarks LONG  (1)
+%EmfPrvMatchCase LONG  (0)
+%EmfPrvWheelLines LONG  (3)
+[PROJECT]
+#noedit
+#system win32 exe
+#model clarion dll
+#pragma debug(vid=>full)
+#compile "disable.clw" -- GENERATED
+#compile "disable001.clw" -- GENERATED
+#compile "disable_BC.clw" -- GENERATED
+#compile "disable_BC0.clw" -- GENERATED
+#link "disable.EXE"
+[PROGRAM]
+[COMMON]
+FROM ABC ABC
+MODIFIED '2026/09/03' '09:00:00'
+[END]
+[MODULE]
+[COMMON]
+FROM ABC GENERATED
+MODIFIED '2026/09/03' '09:00:00'
+[PROCEDURE]
+NAME PrintCustomers
+PROTOTYPE '()'
+PARAMETERS '()'
+[COMMON]
+DESCRIPTION 'Customers report - EMF Unicode previewer test'
+FROM ABC Report
+MODIFIED '2026/09/03' '09:00:00'
+[DATA]
+Progress:Thermometer     BYTE
+!!> GUID('0f0e0d0c-0b0a-4901-8807-060504030201')
+DtlName                  USTRING(90)
+!!> GUID('0f0e0d0c-0b0a-4902-8807-060504030201')
+HdrSub                   USTRING(120)
+!!> GUID('0f0e0d0c-0b0a-4903-8807-060504030201')
+FillIdx                  LONG
+!!> GUID('0f0e0d0c-0b0a-4904-8807-060504030201')
+[FILES]
+[PRIMARY]
+Customers
+[INSTANCE]
+0
+[PROMPTS]
+%ClassItem UNIQUE DEFAULT  ('Default', 'Previewer', 'Process')
+%ClassLines DEPEND %ClassItem MULTI DEFAULT TIMES 2
+WHEN  ('Default') ('Init {19}PROCEDURE(),BYTE,PROC,DERIVED', 'Kill {19}PROCEDURE(),BYTE,PROC,DERIVED')
+WHEN  ('Process') ('TakeRecord {13}PROCEDURE(),BYTE,PROC,DERIVED')
+
+%EnablePrintPreview LONG  (1)
+%InitialZoom DEFAULT  ('No Zoom')
+%ReportDataSource DEFAULT  ('File')
+%DetailBand DEFAULT  ('detail')
+[EMBED]
+EMBED %WindowManagerMethodCodeSection
+[INSTANCES]
+WHEN 'Init'
+[INSTANCES]
+WHEN '(),BYTE'
+[DEFINITION]
+[SOURCE]
+PROPERTY:BEGIN
+PRIORITY 8000
+PROPERTY:END
+! test data: 120 customers
+IF RECORDS(Customers) = 0
+  LOOP FillIdx = 1 TO 120
+    CUS:Id     = FillIdx
+    CUS:Name   = 'Customer ' & FillIdx
+    CUS:City   = CHOOSE((FillIdx - 1) % 4 + 1, 'Zurich', 'Athens', 'Tokyo', 'Moscow')
+    CUS:Amount = FillIdx * 12.5
+    Access:Customers.Insert()
+  END
+END
+HdrSub = U'Unicode ready - <917><955><955><951><957><953><954><940> <8226> <1056><1091><1089><1089><1082><1080><1081> <8226> <20013><25991> <8226> <26085><26412><35486> <8226> Emoji ' & UCHR(1F600h)
+[END]
+[END]
+[END]
+[END]
+[EMBED]
+EMBED %ProcessManagerMethodCodeSection
+[INSTANCES]
+WHEN 'TakeRecord'
+[INSTANCES]
+WHEN '(),BYTE'
+[DEFINITION]
+[SOURCE]
+PROPERTY:BEGIN
+PRIORITY 4900
+PROPERTY:END
+! a wide detail value: ANSI file data widened + exact Unicode text
+CASE (CUS:Id - 1) % 4
+OF 0
+  DtlName = CLIP(CUS:Name) & U' <8211> Ana M<252>ller'
+OF 1
+  DtlName = CLIP(CUS:Name) & U' <8211> <915><953><974><961><947><959><962> <928><945><960><945><948><972><960><959><965><955><959><962>'
+OF 2
+  DtlName = CLIP(CUS:Name) & U' <8211> <23665><30000> <22826><37070>'
+ELSE
+  DtlName = CLIP(CUS:Name) & U' <8211> <1044><1084><1080><1090><1088><1080><1081> <1048><1074><1072><1085><1086><1074>'
+END
+[END]
+[END]
+[END]
+[END]
+[ADDITION]
+NAME EmfPreview EmfPreviewer
+[INSTANCE]
+INSTANCE 1
+[PROMPTS]
+%EmfPrvUse LONG  (1)
+%EmfPrvTitle DEFAULT  ('Customers - EMF Unicode previewer (template test)')
+%EmfPrvOverride LONG  (0)
+[WINDOW]
+ProgressWindow WINDOW('Printing customers...'),AT(,,142,59),FONT('Segoe UI',9,,FONT:regular,CHARSET:DEFAULT),DOUBLE,GRAY,TIMER(1)
+       PROGRESS,AT(10,15,121,9),USE(Progress:Thermometer),RANGE(0,100),#ORIG(Progress:Thermometer)
+       STRING(''),AT(0,3,141,10),USE(?Progress:UserString),CENTER,TRN,#ORIG(?Progress:UserString)
+       STRING(''),AT(0,30,141,10),USE(?Progress:PctText),CENTER,TRN,#ORIG(?Progress:PctText)
+       BUTTON('Cancel'),AT(46,42,50,14),USE(?Progress:Cancel),#ORIG(?Progress:Cancel)
+     END
+[REPORT]
+Report REPORT,AT(500,1000,7500,9000),PRE(RPT),FONT('Segoe UI',10,,FONT:regular,CHARSET:DEFAULT),THOUS,UNICODE
+         HEADER,AT(500,250,7500,700),USE(?Header)
+           STRING('Customers - EMF Unicode previewer template test'),AT(0,0,7500,300),USE(?Title),FONT(,14,,FONT:bold),CENTER
+           STRING(@s120),AT(0,350,7500,250),USE(HdrSub),CENTER
+           LINE,AT(0,650,7500,0),USE(?HdrLine),COLOR(COLOR:Navy)
+         END
+detail   DETAIL,AT(,,7500,300),USE(?detail)
+           STRING(@n_8),AT(0,20,600,250),USE(CUS:Id),RIGHT
+           STRING(@s90),AT(800,20,4200,250),USE(DtlName)
+           STRING(@s40),AT(5100,20,1300,250),USE(CUS:City)
+           STRING(@n-14.2),AT(6400,20,1100,250),USE(CUS:Amount),RIGHT
+         END
+         FOOTER,AT(500,10250,7500,400),USE(?Footer)
+           LINE,AT(0,20,7500,0),USE(?FtrLine),COLOR(COLOR:Navy)
+           STRING('Page'),AT(0,80,400,250),USE(?PageLbl)
+           STRING(@n3),AT(400,80,500,250),USE(?PageNo),PAGENO
+         END
+       END
+

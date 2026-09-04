@@ -85,7 +85,10 @@ FileName                STRING(FILE:MaxFileName)
                       END
 
 !------------------------------------------------------------------------------
-EmfTextIndexClass     CLASS,TYPE,IMPLEMENTS(IReportGenerator),IMPLEMENTS(IReportGeneratorW),MODULE('EmfPreview.CLW'),LINK('EmfPreview.CLW',_EmfPrvLinkMode_),DLL(_EmfPrvDllMode_)
+! Both classes are always linked into the module that uses them (no DLL-mode
+! parameters): an app that still references EmfPreviewClass after the template
+! was removed keeps compiling and running instead of GPFing on a missing define.
+EmfTextIndexClass     CLASS,TYPE,IMPLEMENTS(IReportGenerator),IMPLEMENTS(IReportGeneratorW),MODULE('EmfPreview.CLW'),LINK('EmfPreview.CLW')
 Pages                   &EmfPageQueue
 Texts                   &EmfTextQueue
 CurPage                 LONG,PROTECTED
@@ -108,7 +111,7 @@ ProbePage               PROCEDURE(STRING FileName, *EmfPageQueue Pg),VIRTUAL   !
                       END
 
 !------------------------------------------------------------------------------
-EmfPreviewClass       CLASS(PrintPreviewClass),TYPE,MODULE('EmfPreview.CLW'),LINK('EmfPreview.CLW',_EmfPrvLinkMode_),DLL(_EmfPrvDllMode_)
+EmfPreviewClass       CLASS(PrintPreviewClass),TYPE,MODULE('EmfPreview.CLW'),LINK('EmfPreview.CLW')
 ! ---- options (set before Display) ------------------------------------------
 Title                   CSTRING(128)
 ShowSidebar             BYTE(1)
