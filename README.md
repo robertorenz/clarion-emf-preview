@@ -44,6 +44,16 @@ test/EmfRptTest.*       hand-coded probe: REPORT,UNICODE -> EMF pages, header pr
 testapp/EmfPrvTest.*    AppGen test: TXD dictionary + TXA with one ABC Report procedure, generated & built headlessly
 ```
 
+## Get the code
+
+```
+git clone https://github.com/robertorenz/clarion-emf-preview.git
+```
+
+Requirements: Clarion 12 **Unicode** edition (build 12.0.14234 or later), ABC template chain. Only the three files
+under `src/` are needed in a Clarion installation; `test/` and `testapp/` are the probe program and the headless
+AppGen test used during development.
+
 ## Install
 
 ```powershell
