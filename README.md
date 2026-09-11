@@ -146,3 +146,7 @@ Hand-coded programs: `INCLUDE('EmfPreview.INC')`, declare `Prev EmfPreviewClass`
 * Whole-word search treats only spaces as word boundaries.
 * Text marks are kept for the preview session only (no persistence yet).
 * Search runs over a report's own pages only; PDF/HTML export still goes through the ABC target selector (Save As).
+
+## License
+
+MIT - see [LICENSE](LICENSE).
