@@ -3,6 +3,10 @@
 A drop-in replacement for the ABC `PrintPreviewClass`, delivered as a class library plus an
 AppGen template, written for **Clarion 12 Unicode** (`C:\Clarion12unicode`, build 12.0.14234+).
 
+> **Compatibility: Clarion 12 Unicode only.** The class relies on the Unicode report engine (`REPORT,…,UNICODE`,
+> EMF page files, `USTRING`, `IReportGeneratorW` / `SetWideGenerator` in `ABWMFPAR`), none of which exist in
+> Clarion 11 or the classic (ANSI) Clarion 12. It will not compile there.
+
 | | Stock ABC previewer | EmfPreview |
 |---|---|---|
 | Page files | shows the `.emf` / `.wmf` page in an IMAGE | same engine, plus a rendered twin with highlights baked in |
@@ -50,7 +54,8 @@ testapp/EmfPrvTest.*    AppGen test: TXD dictionary + TXA with one ABC Report pr
 git clone https://github.com/robertorenz/clarion-emf-preview.git
 ```
 
-Requirements: Clarion 12 **Unicode** edition (build 12.0.14234 or later), ABC template chain. Only the three files
+Requirements: Clarion 12 **Unicode** edition (build 12.0.14234 or later), ABC template chain — not compatible with
+Clarion 11 or the non-Unicode Clarion 12 (see the note at the top). Only the three files
 under `src/` are needed in a Clarion installation; `test/` and `testapp/` are the probe program and the headless
 AppGen test used during development.
 
