@@ -1,0 +1,284 @@
+<title>EmfPreview Template Guide</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Serif:wght@400;600&display=swap">
+<style>
+:root{
+  --paper:#fbfcfd; --surface:#f2f5f9; --sunken:#e9eef4; --rule:#d5dfe9;
+  --ink:#101820; --soft:#4b5b6b; --faint:#7b8a9a;
+  --accent:#1b5fcc; --accent-bg:#e6eefb; --accent-rule:#b8cff3;
+  --clarion:#166f69; --clarion-bg:#e2f1ef;
+  --warn:#9a5b06; --warn-bg:#fbf0dc;
+  --hit:#fff176; --hit-ink:#3d3400;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --paper:#0e141b; --surface:#161e27; --sunken:#121a22; --rule:#263340;
+    --ink:#e3eaf2; --soft:#9cadbe; --faint:#6e8093;
+    --accent:#6ea3f2; --accent-bg:#15263c; --accent-rule:#2a4b74;
+    --clarion:#4fb5ab; --clarion-bg:#102a29;
+    --warn:#e0aa4a; --warn-bg:#2b2413;
+    --hit:#5a4d00; --hit-ink:#fff3a0;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0e141b; --surface:#161e27; --sunken:#121a22; --rule:#263340;
+  --ink:#e3eaf2; --soft:#9cadbe; --faint:#6e8093;
+  --accent:#6ea3f2; --accent-bg:#15263c; --accent-rule:#2a4b74;
+  --clarion:#4fb5ab; --clarion-bg:#102a29;
+  --warn:#e0aa4a; --warn-bg:#2b2413;
+  --hit:#5a4d00; --hit-ink:#fff3a0;
+}
+*{box-sizing:border-box}
+body{margin:0; background:var(--paper); color:var(--ink);
+  font-family:"IBM Plex Serif",Georgia,serif; font-size:16px; line-height:1.62;
+  -webkit-font-smoothing:antialiased}
+h1,h2,h3,h4,.ui{font-family:"IBM Plex Sans",system-ui,-apple-system,Segoe UI,sans-serif}
+code,pre,.mono,kbd{font-family:"IBM Plex Mono",ui-monospace,Consolas,monospace}
+a{color:var(--accent)}
+a:focus-visible,button:focus-visible,input:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+.wrap{display:grid; grid-template-columns:270px minmax(0,1fr); align-items:start}
+.side{position:sticky; top:0; height:100vh; overflow-y:auto; padding:24px 20px 60px;
+  border-right:1px solid var(--rule); background:var(--surface)}
+.brand{font-family:"IBM Plex Sans",sans-serif; font-weight:600; font-size:15px; margin:0 0 14px}
+.brand b{color:var(--accent)}
+.vols{list-style:none; margin:0 0 18px; padding:0 0 16px; display:flex; flex-direction:column; gap:3px;
+  border-bottom:1px solid var(--rule)}
+.vols a{display:block; padding:7px 10px; border-radius:6px; text-decoration:none;
+  font:500 13px/1.35 "IBM Plex Sans",sans-serif; color:var(--soft); border:1px solid transparent}
+.vols a:hover{background:var(--sunken); color:var(--ink)}
+.vols a.here{background:var(--accent-bg); border-color:var(--accent-rule); color:var(--accent)}
+.vols small{display:block; font:400 11px/1.35 "IBM Plex Sans",sans-serif; color:var(--faint); margin-top:2px}
+.vols a.here small{color:var(--accent)}
+.filter{width:100%; margin:0 0 16px; padding:7px 10px; font:13px/1.4 "IBM Plex Sans",sans-serif;
+  color:var(--ink); background:var(--paper); border:1px solid var(--rule); border-radius:6px}
+.nav__g{font:600 10.5px/1 "IBM Plex Sans",sans-serif; letter-spacing:.11em; text-transform:uppercase;
+  color:var(--faint); margin:18px 0 8px}
+.nav__l{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:1px}
+.nav__l a{display:block; padding:4px 8px; border-radius:5px; text-decoration:none; color:var(--soft);
+  font:400 13.5px/1.45 "IBM Plex Sans",sans-serif}
+.nav__l a:hover{background:var(--sunken); color:var(--ink)}
+.nav__l a.on{background:var(--accent-bg); color:var(--accent); font-weight:500}
+.main{padding:0 0 120px; min-width:0}
+.inner{max-width:980px; padding:0 40px}
+.hero{padding:52px 40px 30px; border-bottom:1px solid var(--rule);
+  background:linear-gradient(180deg,var(--accent-bg),transparent)}
+.hero .inner{padding:0}
+.eyebrow{font:600 11px/1 "IBM Plex Sans",sans-serif; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--accent); margin:0 0 12px}
+h1{font-size:37px; line-height:1.1; margin:0 0 10px; letter-spacing:-.015em; text-wrap:balance}
+.sub{font-size:17px; color:var(--soft); margin:0 0 18px; max-width:62ch}
+.chips{display:flex; flex-wrap:wrap; gap:8px}
+.chip{font:500 11.5px/1 "IBM Plex Sans",sans-serif; padding:6px 10px; border-radius:99px;
+  border:1px solid var(--rule); background:var(--paper); color:var(--soft)}
+.chip b{color:var(--ink); font-weight:600}
+h2{font-size:26px; margin:60px 0 6px; letter-spacing:-.01em; scroll-margin-top:18px; text-wrap:balance}
+h2 .k{font:600 10.5px/1 "IBM Plex Sans",sans-serif; letter-spacing:.12em; text-transform:uppercase;
+  color:var(--accent); display:block; margin-bottom:9px}
+h3{font-size:17.5px; margin:36px 0 10px; scroll-margin-top:18px}
+h4{font-size:14.5px; margin:24px 0 6px; color:var(--soft); font-weight:600}
+p{margin:0 0 14px; max-width:70ch}
+ul.b,ol.b{max-width:70ch; padding-left:20px; margin:0 0 16px}
+ul.b li,ol.b li{margin:0 0 7px}
+.code{background:var(--sunken); border:1px solid var(--rule); border-left:3px solid var(--accent-rule);
+  border-radius:0 7px 7px 0; padding:14px 16px; overflow-x:auto; margin:0 0 18px;
+  font-size:12.9px; line-height:1.62; position:relative}
+.code code{white-space:pre; color:var(--ink)}
+.code::after{content:attr(data-lang); position:absolute; top:0; right:0; padding:3px 9px;
+  font:500 9.5px/1 "IBM Plex Sans",sans-serif; letter-spacing:.1em; text-transform:uppercase;
+  color:var(--faint); background:var(--surface); border-left:1px solid var(--rule);
+  border-bottom:1px solid var(--rule); border-radius:0 0 0 6px}
+.code--use{margin:7px 0 2px; border-left-color:var(--clarion); background:var(--paper);
+  font-size:12.4px; padding:9px 12px}
+.code--use::after{content:'Clarion'; color:var(--clarion)}
+p code,li code,td code,dd code{background:var(--sunken); border:1px solid var(--rule); border-radius:4px;
+  padding:.06em .34em; font-size:.86em}
+kbd{font-size:.8em; padding:.1em .45em; border:1px solid var(--rule); border-bottom-width:2px;
+  border-radius:4px; background:var(--paper); color:var(--ink); white-space:nowrap}
+mark{background:var(--hit); color:var(--hit-ink); padding:0 .15em; border-radius:2px}
+.tw{overflow-x:auto; margin:0 0 20px; border:1px solid var(--rule); border-radius:8px; background:var(--paper)}
+table{border-collapse:collapse; width:100%; font-size:13.5px; font-family:"IBM Plex Sans",sans-serif}
+th{text-align:left; font-weight:600; font-size:11px; letter-spacing:.08em; text-transform:uppercase;
+  color:var(--faint); padding:9px 14px; border-bottom:1px solid var(--rule); background:var(--surface)}
+td{padding:10px 14px; border-bottom:1px solid var(--rule); vertical-align:top}
+tr:last-child td{border-bottom:0}
+td.num{font-variant-numeric:tabular-nums; white-space:nowrap}
+.fns .fn__n{width:210px; white-space:nowrap}
+.fns .fn__n code{font-size:12.6px; color:var(--accent); font-weight:500; background:none; border:0; padding:0}
+.fns .fn__s code{font-size:12.4px; color:var(--soft); background:none; border:0; padding:0; white-space:pre-wrap}
+.fn__d{margin:5px 0 0; font-family:"IBM Plex Serif",serif; font-size:13.5px; color:var(--ink); max-width:74ch}
+.tag{margin-left:7px; font:500 10px/1 "IBM Plex Mono",monospace; color:var(--faint);
+  border:1px solid var(--rule); border-radius:4px; padding:2px 4px; vertical-align:1px}
+.tag--v{color:var(--clarion); border-color:var(--clarion)}
+.eq td:first-child code{color:var(--accent); background:none; border:0; padding:0}
+.eq .v{font-variant-numeric:tabular-nums; color:var(--soft)}
+.sw{display:inline-block; width:14px; height:14px; border-radius:3px; border:1px solid var(--rule);
+  vertical-align:-2px; margin-right:7px}
+.note{border:1px solid var(--rule); border-left:3px solid var(--accent); background:var(--surface);
+  border-radius:0 7px 7px 0; padding:13px 16px; margin:0 0 18px; max-width:74ch}
+.note--warn{border-left-color:var(--warn); background:var(--warn-bg)}
+.note--cla{border-left-color:var(--clarion); background:var(--clarion-bg)}
+.note__t{font:600 12px/1.3 "IBM Plex Sans",sans-serif; letter-spacing:.03em; margin:0 0 5px;
+  text-transform:uppercase; color:var(--soft)}
+.note--warn .note__t{color:var(--warn)} .note--cla .note__t{color:var(--clarion)}
+.note__b p{margin:0 0 8px; font-size:14.5px} .note__b p:last-child{margin:0}
+.stack{display:flex; flex-direction:column; gap:9px; margin:0 0 22px; max-width:640px}
+.layer{border:1px solid var(--rule); border-radius:8px; padding:12px 15px; background:var(--surface);
+  display:grid; grid-template-columns:128px 1fr; gap:14px; align-items:baseline}
+.layer b{font:600 11px/1.4 "IBM Plex Sans",sans-serif; letter-spacing:.06em; text-transform:uppercase; color:var(--accent)}
+.layer.cla b{color:var(--clarion)}
+.layer p{margin:0; font-size:14px; color:var(--soft); max-width:none}
+.arrow{text-align:center; color:var(--faint); font-size:12px; margin:-4px 0}
+.keys{display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:0 28px; max-width:760px;
+  margin:0 0 20px; padding:0; list-style:none}
+.keys li{display:grid; grid-template-columns:150px 1fr; gap:10px; padding:7px 0; border-bottom:1px solid var(--rule);
+  font-size:14px; align-items:baseline}
+.keys li span{font-family:"IBM Plex Sans",sans-serif; color:var(--soft)}
+.next{display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:12px; margin:26px 0 0}
+.next a{display:block; padding:14px 16px; border:1px solid var(--rule); border-radius:9px; background:var(--surface);
+  text-decoration:none}
+.next a:hover{border-color:var(--accent-rule); background:var(--accent-bg)}
+.next b{display:block; font:600 14px/1.3 "IBM Plex Sans",sans-serif; color:var(--accent); margin-bottom:3px}
+.next span{font:400 13px/1.45 "IBM Plex Serif",serif; color:var(--soft)}
+.hide{display:none !important}
+footer{margin-top:70px; padding:22px 40px 0; border-top:1px solid var(--rule); color:var(--faint);
+  font:400 13px/1.6 "IBM Plex Sans",sans-serif}
+@media (max-width:900px){
+  .wrap{grid-template-columns:1fr}
+  .side{position:static; height:auto; border-right:0; border-bottom:1px solid var(--rule)}
+  .inner,.hero{padding-left:22px; padding-right:22px}
+  .layer{grid-template-columns:1fr; gap:4px}
+  .keys li{grid-template-columns:1fr; gap:2px}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none !important; transition:none !important; scroll-behavior:auto !important}}
+</style>
+<div class="wrap">
+<nav class="side">
+  <p class="brand"><b>EmfPreview</b> for Clarion 12 Unicode</p>
+<ul class="vols"><li><a href="https://claude.ai/code/artifact/59352b0d-291b-4ec6-b073-3abb0236cf05">1. Getting Started<small>Install it and preview a Unicode report</small></a></li><li><a href="https://claude.ai/code/artifact/cec9d673-cbe2-4671-9de0-3b9c3caa0c62">2. Programmer&#x27;s Guide<small>How it works, and how to bend it</small></a></li><li><a href="#" class="here">3. Template Guide<small>Both extensions, every prompt and embed</small></a></li><li><a href="https://claude.ai/code/artifact/77beb73a-d230-4f9a-b1f9-28eace8c5d56">4. Reference<small>The classes, the queues and the equates</small></a></li></ul><p class="nav__g">This volume</p><ul class="nav__l"><li><a href="#two">The two extensions</a></li><li><a href="#global">The global extension</a></li><li><a href="#g-general">General tab</a></li><li><a href="#g-colors">Colors tab</a></li><li><a href="#removing">Removing tab</a></li><li><a href="#swap">How the class swap works</a></li><li><a href="#report">The report extension</a></li><li><a href="#embeds">Where the code lands</a></li><li><a href="#generated">What gets generated</a></li><li><a href="#next3">Where to go next</a></li></ul>
+</nav>
+<main class="main">
+  <header class="hero"><div class="inner">
+    <p class="eyebrow">Volume 3</p>
+    <h1>Template Guide</h1>
+    <p class="sub">Both extensions, every tab and prompt with its default, the class swap and how to undo it, and what the generator actually writes into the report procedure.</p>
+    <div class="chips"><span class="chip"><b>2</b> extensions</span><span class="chip"><b>2</b> tabs</span><span class="chip"><b>24</b> prompts</span><span class="chip"><b>2</b> embed points</span></div>
+  </div></header>
+  <div class="inner"><h2 id="two"><span class="k">Templates</span>The two extensions</h2><p>One template file, <code>EmfPreview.tpl</code>, family <code>ABC</code>: <i>EMF Unicode Previewer for Clarion 12 Unicode - v1.1</i>.</p><div class="tw"><table class=""><thead><tr><th>Extension</th><th>Put it on</th><th>What it does</th></tr></thead><tbody><tr><td><code>EmfPreviewGlobal</code><br><span style="color:var(--soft)">EMF Unicode Previewer - Global (activate)</span></td><td>the application, once</td><td>includes <code>EmfPreview.INC</code>, sets the global <i>Print Previewer</i> class to <code>EmfPreviewClass</code>, and holds the defaults every report inherits &mdash; sidebar, zoom, marks, wheel, colours</td></tr><tr><td><code>EmfPreviewer</code><br><span style="color:var(--soft)">EMF Unicode Previewer - Report options</span></td><td>a Report procedure (Report procedures only; requires <code>EmfPreviewGlobal</code>)</td><td>a window title for this report, local overrides of the global options, or <i>Use</i> unticked to fall back to the classic ABC window</td></tr></tbody></table></div><p>Nothing needs the second extension. With only the global one every report procedure gets the
+EMF previewer with the global settings. Add the report extension where a report wants a title of its own,
+different settings, or the classic window.</p><h2 id="global"><span class="k">Templates</span>The global extension</h2><p>Three tabs. Every prompt and its default, read out of the template:</p><h3 id="g-general">General tab</h3><div class="tw"><table class=""><thead><tr><th>Prompt</th><th>Kind</th><th>Symbol</th><th>Default</th><th>Enabled when</th></tr></thead><tbody><tr><td><b>Disable this template</b></td><td>check box</td><td><code>%EmfPrvDisable</code></td><td>0</td><td>&mdash;</td></tr><tr><td><b>Replace the previewer in every report procedure</b></td><td>check box</td><td><code>%EmfPrvReplaceAll</code></td><td>1</td><td>NOT %EmfPrvDisable</td></tr><tr><td><b>Show the page sidebar</b></td><td>check box</td><td><code>%EmfPrvSidebar</code></td><td>1</td><td>NOT %EmfPrvDisable</td></tr><tr><td><b>Sidebar width (pixels):</b></td><td>spin 100 to 400, step 10</td><td><code>%EmfPrvSidebarWidth</code></td><td>190</td><td>NOT %EmfPrvDisable</td></tr><tr><td><b>Initial zoom:</b></td><td>drop: Fit width, Fit page, 50%, 75%, 100%, 125%, 150%, 200%</td><td><code>%EmfPrvZoom</code></td><td>Fit width</td><td>NOT %EmfPrvDisable</td></tr><tr><td><b>Left click on a text line toggles a mark</b></td><td>check box</td><td><code>%EmfPrvClickMarks</code></td><td>1</td><td>NOT %EmfPrvDisable</td></tr><tr><td><b>Print text marks with the pages</b></td><td>check box</td><td><code>%EmfPrvPrintMarks</code></td><td>1</td><td>NOT %EmfPrvDisable</td></tr><tr><td><b>Search matches case by default</b></td><td>check box</td><td><code>%EmfPrvMatchCase</code></td><td>0</td><td>NOT %EmfPrvDisable</td></tr><tr><td><b>Mouse wheel lines:</b></td><td>spin 1 to 10, step 1</td><td><code>%EmfPrvWheelLines</code></td><td>3</td><td>NOT %EmfPrvDisable</td></tr></tbody></table></div><h3 id="g-colors">Colors tab</h3><p>All seven are <code>COLORREF</code> values, <code>00BBGGRR</code>. The swatch shows the default as it paints.</p><div class="tw"><table class=""><thead><tr><th>Prompt</th><th>Kind</th><th>Symbol</th><th>Default</th><th>Enabled when</th></tr></thead><tbody><tr><td><b>Search hit highlight:</b></td><td>colour</td><td><code>%EmfPrvHighlightColor</code></td><td><span class="sw" style="background:#FFF176"></span>7795199 <span class="mono" style="color:var(--faint)">#FFF176</span></td><td>&mdash;</td></tr><tr><td><b>Text mark highlight:</b></td><td>colour</td><td><code>%EmfPrvMarkColor</code></td><td><span class="sw" style="background:#A5E6FF"></span>16770725 <span class="mono" style="color:var(--faint)">#A5E6FF</span></td><td>&mdash;</td></tr><tr><td><b>Current hit frame:</b></td><td>colour</td><td><code>%EmfPrvCurrentColor</code></td><td><span class="sw" style="background:#FF7800"></span>30975 <span class="mono" style="color:var(--faint)">#FF7800</span></td><td>&mdash;</td></tr><tr><td><b>Marked page frame:</b></td><td>colour</td><td><code>%EmfPrvPageMarkColor</code></td><td><span class="sw" style="background:#F59E0B"></span>761589 <span class="mono" style="color:var(--faint)">#F59E0B</span></td><td>&mdash;</td></tr><tr><td><b>Current page frame:</b></td><td>colour</td><td><code>%EmfPrvAccentColor</code></td><td><span class="sw" style="background:#1F6FEB"></span>15429407 <span class="mono" style="color:var(--faint)">#1F6FEB</span></td><td>&mdash;</td></tr><tr><td><b>Page area background:</b></td><td>colour</td><td><code>%EmfPrvPaperShadow</code></td><td><span class="sw" style="background:#525659"></span>5854802 <span class="mono" style="color:var(--faint)">#525659</span></td><td>&mdash;</td></tr><tr><td><b>Sidebar background:</b></td><td>colour</td><td><code>%EmfPrvSidebarColor</code></td><td><span class="sw" style="background:#EEF1F5"></span>16118254 <span class="mono" style="color:var(--faint)">#EEF1F5</span></td><td>&mdash;</td></tr></tbody></table></div><h3 id="removing">Removing tab</h3><p>Not a prompt &mdash; a page of instructions, because the swap the extension performs outlives it. The
+extension sets <b>Global Properties &rarr; Classes &rarr; Report &rarr; Print Previewer</b> from
+<code>PrintPreviewClass</code> to <code>EmfPreviewClass</code>, and Clarion <b>stores that value in the
+.app</b>. Delete the extension and the reports keep the EmfPreview previewer.</p>
+<ol class="b">
+<li>Tick <b>Disable this template</b> on the General tab.</li>
+<li>Generate once &mdash; the Print Previewer class is put back to <code>PrintPreviewClass</code>.</li>
+<li>Delete the extension and generate again.</li>
+</ol>
+<p>Already deleted it? Set the Print Previewer class back by hand and generate all. The class is linked
+into every module that uses it, so a leftover reference compiles and runs rather than GPFing; the
+<code>testapp\removal.txa</code> and <code>disable.txa</code> builds are the regression tests for both
+paths.</p><h3 id="swap">How the class swap works</h3><p>ABC report procedures declare their previewer from the global symbol
+<code>%PrintPreviewType</code>. The extension sets it at the start of every generation and restores it
+when disabled or when <i>Replace</i> is off, so the value the .app keeps is always consistent with the
+extension's own settings:</p><pre class="code" data-lang="template"><code>#ATSTART
+  #IF(NOT %EmfPrvDisable AND %EmfPrvReplaceAll)
+    #SET(%PrintPreviewType,&#x27;EmfPreviewClass&#x27;)
+  #ELSIF(%PrintPreviewType = &#x27;EmfPreviewClass&#x27;)
+    #SET(%PrintPreviewType,&#x27;PrintPreviewClass&#x27;)
+  #ENDIF
+#ENDAT</code></pre><p>Multi-DLL suites: add the global extension to every application. Each module links its own copy of the class; there is nothing to export.</p><h2 id="report"><span class="k">Templates</span>The report extension</h2><p>Accepted on Report procedures only. No tabs; the prompts nest under two check boxes:</p><div class="tw"><table class=""><thead><tr><th>Prompt</th><th>Kind</th><th>Symbol</th><th>Default</th><th>Enabled when</th></tr></thead><tbody><tr><td><b>Use the EMF previewer for this report</b></td><td>check box</td><td><code>%EmfPrvUse</code></td><td>1</td><td>&mdash;</td></tr><tr><td><b>Window title:</b></td><td>text, 80 characters</td><td><code>%EmfPrvTitle</code></td><td></td><td>%EmfPrvUse</td></tr><tr><td><b>Override the global options</b></td><td>check box</td><td><code>%EmfPrvOverride</code></td><td>0</td><td>%EmfPrvUse</td></tr><tr><td><b>Show the page sidebar</b></td><td>check box</td><td><code>%EmfPrvLSidebar</code></td><td>1</td><td>%EmfPrvUse and %EmfPrvOverride</td></tr><tr><td><b>Initial zoom:</b></td><td>drop: Fit width, Fit page, 50%, 75%, 100%, 125%, 150%, 200%</td><td><code>%EmfPrvLZoom</code></td><td>Fit width</td><td>%EmfPrvUse and %EmfPrvOverride</td></tr><tr><td><b>Left click on a text line toggles a mark</b></td><td>check box</td><td><code>%EmfPrvLClickMarks</code></td><td>1</td><td>%EmfPrvUse and %EmfPrvOverride</td></tr><tr><td><b>Print text marks with the pages</b></td><td>check box</td><td><code>%EmfPrvLPrintMarks</code></td><td>1</td><td>%EmfPrvUse and %EmfPrvOverride</td></tr><tr><td><b>Search matches case by default</b></td><td>check box</td><td><code>%EmfPrvLMatchCase</code></td><td>0</td><td>%EmfPrvUse and %EmfPrvOverride</td></tr></tbody></table></div><p>With <i>Override the global options</i> off, the five local prompts are ignored and the global
+values are generated. The sidebar width, wheel lines and colours always come from the global extension.</p><h2 id="embeds"><span class="k">Templates</span>Where the code lands</h2><p>No embed points of its own &mdash; the template only writes into existing ABC points:</p><div class="tw"><table class=""><thead><tr><th>Extension</th><th>Embed point</th><th>Priority</th><th>Condition</th></tr></thead><tbody><tr><td><code>EmfPreviewGlobal</code></td><td><code>%AfterGlobalIncludes</code></td><td>&mdash;</td><td><code>NOT %EmfPrvDisable</code></td></tr><tr><td><code>EmfPreviewGlobal</code></td><td><code>#ATSTART</code></td><td>&mdash;</td><td>runs before generation: the class swap</td></tr><tr><td><code>EmfPreviewer</code></td><td><code>%WindowManagerMethodCodeSection,&#x27;Init&#x27;,&#x27;(),BYTE&#x27;</code></td><td>8490</td><td><code>NOT %EmfPrvDisable AND %EmfPrvReplaceAll AND %EnablePrintPreview</code></td></tr><tr><td><code>EmfPreviewer</code></td><td><code>#ATSTART</code></td><td>&mdash;</td><td>runs before generation: resolves the zoom drop to an equate or a percent</td></tr></tbody></table></div><p>Priority 8490 in <code>WindowManager.Init</code> is after the report template has created the
+<code>Previewer</code> object and before the window opens, so the options are in place for
+<code>Display</code>.</p><h2 id="generated"><span class="k">Templates</span>What gets generated</h2><pre class="code" data-lang="clarion"><code>!  ThisWindow.Init, priority 8490 - what the report-options extension writes
+!  for a report whose global prompts are at their defaults:
+! EMF Unicode Previewer options
+Previewer.ShowSidebar = 1
+Previewer.SidebarWidth = 190
+Previewer.InitialZoom = EmfPrv:Zoom:FitWidth
+Previewer.ClickMarks = 1
+Previewer.PrintMarks = 1
+Previewer.SearchMatchCase = 0
+Previewer.WheelLines = 3
+Previewer.HighlightColor = 7795199
+Previewer.MarkColor = 16770725
+Previewer.CurrentColor = 30975
+Previewer.PageMarkColor = 761589
+Previewer.AccentColor = 15429407
+Previewer.PaperShadow = 5854802
+Previewer.SidebarColor = 16118254
+Previewer.Title = &#x27;Customers - EMF Unicode previewer&#x27;
+
+!  ... and with &quot;Use the EMF previewer for this report&quot; unticked:
+! EMF Unicode Previewer: this report uses the classic ABC preview window
+Previewer.ClassicMode = True</code></pre><p>The generating block itself, from the template:</p><pre class="code" data-lang="template"><code>#AT(%WindowManagerMethodCodeSection,&#x27;Init&#x27;,&#x27;(),BYTE&#x27;),PRIORITY(8490),WHERE(NOT %EmfPrvDisable AND %EmfPrvReplaceAll AND %EnablePrintPreview)
+  #IF(%EmfPrvUse)
+! EMF Unicode Previewer options
+%PreviewerObjectName.ShowSidebar = %EmfPrvSidebarValue
+%PreviewerObjectName.SidebarWidth = %EmfPrvSidebarWidth
+%PreviewerObjectName.InitialZoom = %EmfPrvZoomValue
+%PreviewerObjectName.ClickMarks = %EmfPrvClickValue
+%PreviewerObjectName.PrintMarks = %EmfPrvPrintValue
+%PreviewerObjectName.SearchMatchCase = %EmfPrvCaseValue
+%PreviewerObjectName.WheelLines = %EmfPrvWheelLines
+%PreviewerObjectName.HighlightColor = %EmfPrvHighlightColor
+%PreviewerObjectName.MarkColor = %EmfPrvMarkColor
+%PreviewerObjectName.CurrentColor = %EmfPrvCurrentColor
+%PreviewerObjectName.PageMarkColor = %EmfPrvPageMarkColor
+%PreviewerObjectName.AccentColor = %EmfPrvAccentColor
+%PreviewerObjectName.PaperShadow = %EmfPrvPaperShadow
+%PreviewerObjectName.SidebarColor = %EmfPrvSidebarColor
+    #IF(%EmfPrvTitle)
+%PreviewerObjectName.Title = &#x27;%EmfPrvTitle&#x27;
+    #ENDIF
+  #ELSE
+! EMF Unicode Previewer: this report uses the classic ABC preview window
+%PreviewerObjectName.ClassicMode = True
+  #ENDIF
+#ENDAT</code></pre><aside class="note note--cla"><p class="note__t">Regenerate to pick up template changes</p><div class="note__b"><p>Prompt changes reach the source on the next <b>generate</b>. Class changes are in <code>EmfPreview.clw</code> and reach the EXE on the next <b>compile</b> &mdash; and because the class is linked, not a DLL, every module that uses it has to be rebuilt.</p></div></aside><h2 id="next3"><span class="k">Templates</span>Where to go next</h2><div class="next"><a href="https://claude.ai/code/artifact/77beb73a-d230-4f9a-b1f9-28eace8c5d56"><b>Reference &rarr;</b><span>The classes, the queues and the equates</span></a><a href="https://claude.ai/code/artifact/cec9d673-cbe2-4671-9de0-3b9c3caa0c62"><b>Programmer&#x27;s Guide &rarr;</b><span>How it works, and how to bend it</span></a><a href="https://claude.ai/code/artifact/59352b0d-291b-4ec6-b073-3abb0236cf05"><b>Getting Started &rarr;</b><span>Install it and preview a Unicode report</span></a></div>
+    <footer>EmfPreview &mdash; four volumes. The reference is generated from <code>EmfPreview.inc</code> and <code>EmfPreview.tpl</code>, so its signatures, defaults and template symbols are the ones in the build. Clarion 12 Unicode only.</footer>
+  </div>
+</main>
+</div>
+<script>
+const q = document.getElementById('filter');
+if (q) {
+  const rows = [...document.querySelectorAll('tr.fn')];
+  q.addEventListener('input', () => {
+    const t = q.value.trim().toLowerCase();
+    rows.forEach(r => r.classList.toggle('hide', t && !r.dataset.k.includes(t)));
+    document.querySelectorAll('.tw').forEach(w => {
+      const body = w.querySelector('tbody');
+      if (!body || !body.querySelector('tr.fn')) return;
+      const any = [...body.querySelectorAll('tr')].some(r => !r.classList.contains('hide'));
+      const h = w.previousElementSibling;
+      w.classList.toggle('hide', !any);
+      if (h && (h.tagName === 'H3' || h.tagName === 'P')) h.classList.toggle('hide', !any);
+    });
+  });
+}
+/*  Which sidebar entry is lit.  Position, not IntersectionObserver: one click
+    crosses several headings at once, they all arrive in one callback, and the
+    last one processed wins - which lights the wrong chapter.  */
+const links = [...document.querySelectorAll('.nav__l a')];
+if (links.length) {
+  const byId  = new Map(links.map(a => [a.getAttribute('href').slice(1), a]));
+  const marks = [...document.querySelectorAll('h2[id],h3[id]')].filter(h => byId.has(h.id));
+  const light = a => links.forEach(l => l.classList.toggle('on', l === a));
+  let held = null, holdUntil = 0, queued = false;
+  function spy() {
+    queued = false;
+    if (held) { light(held); return; }
+    let cur = marks[0];
+    for (const h of marks) { if (h.getBoundingClientRect().top <= 120) cur = h; else break; }
+    if (innerHeight + scrollY >= document.documentElement.scrollHeight - 2) cur = marks[marks.length - 1];
+    if (cur) light(byId.get(cur.id));
+  }
+  links.forEach(a => a.addEventListener('click', () => { held = a; holdUntil = performance.now() + 700; light(a); }));
+  const later = () => { if (!queued) { queued = true; requestAnimationFrame(spy); } };
+  addEventListener('scroll', () => { if (held && performance.now() > holdUntil) held = null; later(); }, {passive: true});
+  addEventListener('resize', later);
+  if (marks.length) spy();
+}
+</script>

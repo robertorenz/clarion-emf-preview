@@ -1,0 +1,286 @@
+<title>EmfPreview Getting Started</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Serif:wght@400;600&display=swap">
+<style>
+:root{
+  --paper:#fbfcfd; --surface:#f2f5f9; --sunken:#e9eef4; --rule:#d5dfe9;
+  --ink:#101820; --soft:#4b5b6b; --faint:#7b8a9a;
+  --accent:#1b5fcc; --accent-bg:#e6eefb; --accent-rule:#b8cff3;
+  --clarion:#166f69; --clarion-bg:#e2f1ef;
+  --warn:#9a5b06; --warn-bg:#fbf0dc;
+  --hit:#fff176; --hit-ink:#3d3400;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --paper:#0e141b; --surface:#161e27; --sunken:#121a22; --rule:#263340;
+    --ink:#e3eaf2; --soft:#9cadbe; --faint:#6e8093;
+    --accent:#6ea3f2; --accent-bg:#15263c; --accent-rule:#2a4b74;
+    --clarion:#4fb5ab; --clarion-bg:#102a29;
+    --warn:#e0aa4a; --warn-bg:#2b2413;
+    --hit:#5a4d00; --hit-ink:#fff3a0;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0e141b; --surface:#161e27; --sunken:#121a22; --rule:#263340;
+  --ink:#e3eaf2; --soft:#9cadbe; --faint:#6e8093;
+  --accent:#6ea3f2; --accent-bg:#15263c; --accent-rule:#2a4b74;
+  --clarion:#4fb5ab; --clarion-bg:#102a29;
+  --warn:#e0aa4a; --warn-bg:#2b2413;
+  --hit:#5a4d00; --hit-ink:#fff3a0;
+}
+*{box-sizing:border-box}
+body{margin:0; background:var(--paper); color:var(--ink);
+  font-family:"IBM Plex Serif",Georgia,serif; font-size:16px; line-height:1.62;
+  -webkit-font-smoothing:antialiased}
+h1,h2,h3,h4,.ui{font-family:"IBM Plex Sans",system-ui,-apple-system,Segoe UI,sans-serif}
+code,pre,.mono,kbd{font-family:"IBM Plex Mono",ui-monospace,Consolas,monospace}
+a{color:var(--accent)}
+a:focus-visible,button:focus-visible,input:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+.wrap{display:grid; grid-template-columns:270px minmax(0,1fr); align-items:start}
+.side{position:sticky; top:0; height:100vh; overflow-y:auto; padding:24px 20px 60px;
+  border-right:1px solid var(--rule); background:var(--surface)}
+.brand{font-family:"IBM Plex Sans",sans-serif; font-weight:600; font-size:15px; margin:0 0 14px}
+.brand b{color:var(--accent)}
+.vols{list-style:none; margin:0 0 18px; padding:0 0 16px; display:flex; flex-direction:column; gap:3px;
+  border-bottom:1px solid var(--rule)}
+.vols a{display:block; padding:7px 10px; border-radius:6px; text-decoration:none;
+  font:500 13px/1.35 "IBM Plex Sans",sans-serif; color:var(--soft); border:1px solid transparent}
+.vols a:hover{background:var(--sunken); color:var(--ink)}
+.vols a.here{background:var(--accent-bg); border-color:var(--accent-rule); color:var(--accent)}
+.vols small{display:block; font:400 11px/1.35 "IBM Plex Sans",sans-serif; color:var(--faint); margin-top:2px}
+.vols a.here small{color:var(--accent)}
+.filter{width:100%; margin:0 0 16px; padding:7px 10px; font:13px/1.4 "IBM Plex Sans",sans-serif;
+  color:var(--ink); background:var(--paper); border:1px solid var(--rule); border-radius:6px}
+.nav__g{font:600 10.5px/1 "IBM Plex Sans",sans-serif; letter-spacing:.11em; text-transform:uppercase;
+  color:var(--faint); margin:18px 0 8px}
+.nav__l{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:1px}
+.nav__l a{display:block; padding:4px 8px; border-radius:5px; text-decoration:none; color:var(--soft);
+  font:400 13.5px/1.45 "IBM Plex Sans",sans-serif}
+.nav__l a:hover{background:var(--sunken); color:var(--ink)}
+.nav__l a.on{background:var(--accent-bg); color:var(--accent); font-weight:500}
+.main{padding:0 0 120px; min-width:0}
+.inner{max-width:980px; padding:0 40px}
+.hero{padding:52px 40px 30px; border-bottom:1px solid var(--rule);
+  background:linear-gradient(180deg,var(--accent-bg),transparent)}
+.hero .inner{padding:0}
+.eyebrow{font:600 11px/1 "IBM Plex Sans",sans-serif; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--accent); margin:0 0 12px}
+h1{font-size:37px; line-height:1.1; margin:0 0 10px; letter-spacing:-.015em; text-wrap:balance}
+.sub{font-size:17px; color:var(--soft); margin:0 0 18px; max-width:62ch}
+.chips{display:flex; flex-wrap:wrap; gap:8px}
+.chip{font:500 11.5px/1 "IBM Plex Sans",sans-serif; padding:6px 10px; border-radius:99px;
+  border:1px solid var(--rule); background:var(--paper); color:var(--soft)}
+.chip b{color:var(--ink); font-weight:600}
+h2{font-size:26px; margin:60px 0 6px; letter-spacing:-.01em; scroll-margin-top:18px; text-wrap:balance}
+h2 .k{font:600 10.5px/1 "IBM Plex Sans",sans-serif; letter-spacing:.12em; text-transform:uppercase;
+  color:var(--accent); display:block; margin-bottom:9px}
+h3{font-size:17.5px; margin:36px 0 10px; scroll-margin-top:18px}
+h4{font-size:14.5px; margin:24px 0 6px; color:var(--soft); font-weight:600}
+p{margin:0 0 14px; max-width:70ch}
+ul.b,ol.b{max-width:70ch; padding-left:20px; margin:0 0 16px}
+ul.b li,ol.b li{margin:0 0 7px}
+.code{background:var(--sunken); border:1px solid var(--rule); border-left:3px solid var(--accent-rule);
+  border-radius:0 7px 7px 0; padding:14px 16px; overflow-x:auto; margin:0 0 18px;
+  font-size:12.9px; line-height:1.62; position:relative}
+.code code{white-space:pre; color:var(--ink)}
+.code::after{content:attr(data-lang); position:absolute; top:0; right:0; padding:3px 9px;
+  font:500 9.5px/1 "IBM Plex Sans",sans-serif; letter-spacing:.1em; text-transform:uppercase;
+  color:var(--faint); background:var(--surface); border-left:1px solid var(--rule);
+  border-bottom:1px solid var(--rule); border-radius:0 0 0 6px}
+.code--use{margin:7px 0 2px; border-left-color:var(--clarion); background:var(--paper);
+  font-size:12.4px; padding:9px 12px}
+.code--use::after{content:'Clarion'; color:var(--clarion)}
+p code,li code,td code,dd code{background:var(--sunken); border:1px solid var(--rule); border-radius:4px;
+  padding:.06em .34em; font-size:.86em}
+kbd{font-size:.8em; padding:.1em .45em; border:1px solid var(--rule); border-bottom-width:2px;
+  border-radius:4px; background:var(--paper); color:var(--ink); white-space:nowrap}
+mark{background:var(--hit); color:var(--hit-ink); padding:0 .15em; border-radius:2px}
+.tw{overflow-x:auto; margin:0 0 20px; border:1px solid var(--rule); border-radius:8px; background:var(--paper)}
+table{border-collapse:collapse; width:100%; font-size:13.5px; font-family:"IBM Plex Sans",sans-serif}
+th{text-align:left; font-weight:600; font-size:11px; letter-spacing:.08em; text-transform:uppercase;
+  color:var(--faint); padding:9px 14px; border-bottom:1px solid var(--rule); background:var(--surface)}
+td{padding:10px 14px; border-bottom:1px solid var(--rule); vertical-align:top}
+tr:last-child td{border-bottom:0}
+td.num{font-variant-numeric:tabular-nums; white-space:nowrap}
+.fns .fn__n{width:210px; white-space:nowrap}
+.fns .fn__n code{font-size:12.6px; color:var(--accent); font-weight:500; background:none; border:0; padding:0}
+.fns .fn__s code{font-size:12.4px; color:var(--soft); background:none; border:0; padding:0; white-space:pre-wrap}
+.fn__d{margin:5px 0 0; font-family:"IBM Plex Serif",serif; font-size:13.5px; color:var(--ink); max-width:74ch}
+.tag{margin-left:7px; font:500 10px/1 "IBM Plex Mono",monospace; color:var(--faint);
+  border:1px solid var(--rule); border-radius:4px; padding:2px 4px; vertical-align:1px}
+.tag--v{color:var(--clarion); border-color:var(--clarion)}
+.eq td:first-child code{color:var(--accent); background:none; border:0; padding:0}
+.eq .v{font-variant-numeric:tabular-nums; color:var(--soft)}
+.sw{display:inline-block; width:14px; height:14px; border-radius:3px; border:1px solid var(--rule);
+  vertical-align:-2px; margin-right:7px}
+.note{border:1px solid var(--rule); border-left:3px solid var(--accent); background:var(--surface);
+  border-radius:0 7px 7px 0; padding:13px 16px; margin:0 0 18px; max-width:74ch}
+.note--warn{border-left-color:var(--warn); background:var(--warn-bg)}
+.note--cla{border-left-color:var(--clarion); background:var(--clarion-bg)}
+.note__t{font:600 12px/1.3 "IBM Plex Sans",sans-serif; letter-spacing:.03em; margin:0 0 5px;
+  text-transform:uppercase; color:var(--soft)}
+.note--warn .note__t{color:var(--warn)} .note--cla .note__t{color:var(--clarion)}
+.note__b p{margin:0 0 8px; font-size:14.5px} .note__b p:last-child{margin:0}
+.stack{display:flex; flex-direction:column; gap:9px; margin:0 0 22px; max-width:640px}
+.layer{border:1px solid var(--rule); border-radius:8px; padding:12px 15px; background:var(--surface);
+  display:grid; grid-template-columns:128px 1fr; gap:14px; align-items:baseline}
+.layer b{font:600 11px/1.4 "IBM Plex Sans",sans-serif; letter-spacing:.06em; text-transform:uppercase; color:var(--accent)}
+.layer.cla b{color:var(--clarion)}
+.layer p{margin:0; font-size:14px; color:var(--soft); max-width:none}
+.arrow{text-align:center; color:var(--faint); font-size:12px; margin:-4px 0}
+.keys{display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:0 28px; max-width:760px;
+  margin:0 0 20px; padding:0; list-style:none}
+.keys li{display:grid; grid-template-columns:150px 1fr; gap:10px; padding:7px 0; border-bottom:1px solid var(--rule);
+  font-size:14px; align-items:baseline}
+.keys li span{font-family:"IBM Plex Sans",sans-serif; color:var(--soft)}
+.next{display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:12px; margin:26px 0 0}
+.next a{display:block; padding:14px 16px; border:1px solid var(--rule); border-radius:9px; background:var(--surface);
+  text-decoration:none}
+.next a:hover{border-color:var(--accent-rule); background:var(--accent-bg)}
+.next b{display:block; font:600 14px/1.3 "IBM Plex Sans",sans-serif; color:var(--accent); margin-bottom:3px}
+.next span{font:400 13px/1.45 "IBM Plex Serif",serif; color:var(--soft)}
+.hide{display:none !important}
+footer{margin-top:70px; padding:22px 40px 0; border-top:1px solid var(--rule); color:var(--faint);
+  font:400 13px/1.6 "IBM Plex Sans",sans-serif}
+@media (max-width:900px){
+  .wrap{grid-template-columns:1fr}
+  .side{position:static; height:auto; border-right:0; border-bottom:1px solid var(--rule)}
+  .inner,.hero{padding-left:22px; padding-right:22px}
+  .layer{grid-template-columns:1fr; gap:4px}
+  .keys li{grid-template-columns:1fr; gap:2px}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none !important; transition:none !important; scroll-behavior:auto !important}}
+</style>
+<div class="wrap">
+<nav class="side">
+  <p class="brand"><b>EmfPreview</b> for Clarion 12 Unicode</p>
+<ul class="vols"><li><a href="#" class="here">1. Getting Started<small>Install it and preview a Unicode report</small></a></li><li><a href="https://claude.ai/code/artifact/cec9d673-cbe2-4671-9de0-3b9c3caa0c62">2. Programmer&#x27;s Guide<small>How it works, and how to bend it</small></a></li><li><a href="https://claude.ai/code/artifact/407dd75b-3ee8-4b8b-96cb-feb2955df9c6">3. Template Guide<small>Both extensions, every prompt and embed</small></a></li><li><a href="https://claude.ai/code/artifact/77beb73a-d230-4f9a-b1f9-28eace8c5d56">4. Reference<small>The classes, the queues and the equates</small></a></li></ul><p class="nav__g">This volume</p><ul class="nav__l"><li><a href="#what">What this is</a></li><li><a href="#install">Installing</a></li><li><a href="#hello">The smallest preview, by hand</a></li><li><a href="#first-template">The same thing from AppGen</a></li><li><a href="#demos">The tests</a></li><li><a href="#next">Where to go next</a></li></ul>
+</nav>
+<main class="main">
+  <header class="hero"><div class="inner">
+    <p class="eyebrow">Volume 1</p>
+    <h1>Getting Started</h1>
+    <p class="sub">Install it, preview a Unicode report by hand, then do the same thing from AppGen in four steps. Twenty minutes, Clarion 12 Unicode assumed.</p>
+    <div class="chips"><span class="chip"><b>3</b> files to install</span><span class="chip"><b>0</b> runtime files</span><span class="chip"><b>2</b> test programs</span></div>
+  </div></header>
+  <div class="inner"><h2 id="what"><span class="k">Start</span>What this is</h2>
+<p>EmfPreview replaces the ABC <code>PrintPreviewClass</code> in a Clarion 12 Unicode application. The
+report engine is untouched: it still prints to <code>PREVIEW</code> page files, and the previewer still
+returns <code>TRUE</code> when the user wants the pages sent to the printer. What changes is the window
+&mdash; a thumbnail sidebar, full-text search over every page with the hits <mark>highlighted on the
+page</mark>, marker-pen text marks, page marks, zoom and fit modes, a mouse wheel that works, and
+printing only the marked pages or the pages with their marks baked in.</p>
+<div class="stack">
+  <div class="layer cla"><b>Template</b><p>One global extension swaps the previewer class for every report; an optional per-report extension sets the title, overrides options, or opts a report out.</p></div>
+  <div class="arrow">&#8595;&nbsp; sets options on</div>
+  <div class="layer cla"><b>EmfPreviewClass</b><p>Derived from <code>PrintPreviewClass</code>, so the report template's <code>Previewer</code> object, <code>Display</code>, <code>Init</code> and <code>Kill</code> keep their meaning. Hand-coded programs use it directly.</p></div>
+  <div class="arrow">&#8595;&nbsp; is fed by</div>
+  <div class="layer"><b>EmfTextIndexClass</b><p>Runs the shipped <code>WMFDocumentParser</code> over the page metafiles and keeps every text item with its page rectangle. Reusable on its own.</p></div>
+</div><aside class="note note--warn"><p class="note__t">Clarion 12 Unicode only</p><div class="note__b"><p>The class relies on the Unicode report engine: <code>REPORT,&hellip;,UNICODE</code> writing <code>.emf</code> pages, <code>USTRING</code>, and the <code>IReportGeneratorW</code> wide lane of <code>ABWMFPAR</code>. None of that exists in Clarion 11 or the ANSI Clarion 12, and the include file refuses to compile there: <code>EmfPreview_requires_Clarion_12_Unicode</code> is the first error you would see.</p></div></aside><h2 id="install"><span class="k">Start</span>Installing</h2><p>Run the installer from the repository folder. It copies three files and registers the template chain:</p><pre class="code" data-lang="shell"><code>powershell -ExecutionPolicy Bypass -File install.ps1                      # C:\Clarion12unicode
+powershell -ExecutionPolicy Bypass -File install.ps1 -ClarionRoot D:\C12U   # somewhere else</code></pre><pre class="code" data-lang="files"><code>src\EmfPreview.inc   -&gt;  &lt;Clarion&gt;\accessory\libsrc\win
+src\EmfPreview.clw   -&gt;  &lt;Clarion&gt;\accessory\libsrc\win
+src\EmfPreview.tpl   -&gt;  &lt;Clarion&gt;\accessory\template\win      then  ClarionCL -tr EmfPreview.tpl</code></pre><aside class="note note--warn"><p class="note__t">Restart the IDE if it was open</p><div class="note__b"><p>The template registry is read at start-up. An IDE that was running during the install does not list <b>EMF Unicode Previewer</b> under Global Extensions until it is restarted, which looks exactly like the install not working.</p></div></aside><p>Nothing to ship: the class is linked into the EXE (or into each DLL that uses it). There is no runtime file.</p><h2 id="hello"><span class="k">Start</span>The smallest preview, by hand</h2><p>No templates. A Unicode report, 240 rows, and the previewer instead of the stock one:</p><pre class="code" data-lang="clarion"><code>  PROGRAM
+  INCLUDE(&#x27;KEYCODES.CLW&#x27;),ONCE
+  INCLUDE(&#x27;EQUATES.CLW&#x27;),ONCE
+  INCLUDE(&#x27;ERRORS.CLW&#x27;),ONCE
+  INCLUDE(&#x27;ABERROR.INC&#x27;),ONCE
+  INCLUDE(&#x27;ABREPORT.INC&#x27;),ONCE
+  INCLUDE(&#x27;EmfPreview.INC&#x27;),ONCE
+  MAP
+  END
+
+GlobalErrors  ErrorClass
+PgQ           PrintPreviewFileQueue         ! the report&#x27;s page files land here
+Prev          EmfPreviewClass
+i             LONG
+RowNo         LONG
+RowName       USTRING(80)
+
+Report REPORT,AT(500,1000,7500,9000),PRE(RPT),FONT(&#x27;Segoe UI&#x27;,10),THOUS, |
+         PREVIEW(PgQ),UNICODE                ! UNICODE: wide text, .emf pages
+         HEADER,AT(500,250,7500,700)
+           STRING(U&#x27;Customers  Ω Ж 中 😀&#x27;),AT(0,0,7500,300),FONT(,14,,FONT:bold),CENTER
+         END
+Detail   DETAIL,AT(,,7500,300)
+           STRING(@n5),AT(0,20,500,250),USE(RowNo),RIGHT
+           STRING(@s80),AT(700,20,6000,250),USE(RowName)
+         END
+       END
+
+  CODE
+  GlobalErrors.Init()
+  OPEN(Report)
+  LOOP i = 1 TO 240
+    RowNo   = i
+    RowName = CHOOSE((i % 3) + 1, U&#x27;Ana Müller&#x27;, U&#x27;Дмитрий Иванов&#x27;, U&#x27;山田 太郎&#x27;)
+    PRINT(RPT:Detail)
+  END
+  ENDPAGE(Report)                            ! PgQ now holds one .emf per page
+
+  Prev.Init(PgQ)
+  Prev.Errors &amp;= GlobalErrors
+  Prev.Title = &#x27;Customers - preview&#x27;
+  IF Prev.Display()                          ! TRUE when the user chose Print
+    Report{PROP:FlushPreview} = TRUE
+  END
+  Prev.Kill()
+  CLOSE(Report)
+  GlobalErrors.Kill()</code></pre><aside class="note note--cla"><p class="note__t">Three lines that matter</p><div class="note__b"><p><code>PREVIEW(PgQ),UNICODE</code> on the REPORT. Without <code>UNICODE</code> the pages are placeable <code>.wmf</code> files &mdash; still previewed and searched, but through the ANSI text lane, so <code>山田</code> in a name is lost to the code page.</p><p><code>Prev.Init(PgQ)</code> hands over the page queue; <code>Prev.Errors &amp;= GlobalErrors</code> is what the parser reports through.</p><p><code>IF Prev.Display()</code> &mdash; the same contract as ABC: <code>TRUE</code> means print, and <code>PROP:FlushPreview</code> sends the pages. <code>PagesToPrint</code> is already filled when the user pressed <b>Print marked</b>.</p></div></aside><h2 id="first-template"><span class="k">Start</span>The same thing from AppGen</h2><ol class="b">
+<li>Open the application, <b>Global Properties &rarr; Extensions &rarr; Insert</b>, pick
+<b>EMF Unicode Previewer &ndash; Global (activate)</b>. Leave <i>Replace the previewer in every report
+procedure</i> ticked.</li>
+<li>Give each report the <b>Unicode</b> attribute in the report designer (the REPORT structure gets
+<code>,UNICODE</code>). Classic reports keep working; they just lose non-ANSI characters in the text
+index.</li>
+<li>Generate and compile. Every report procedure's <code>Previewer</code> object is now an
+<code>EmfPreviewClass</code> &mdash; the extension sets the global <i>Print Previewer</i> class.</li>
+<li>Optional, per report: <b>Extensions &rarr; EMF Unicode Previewer &ndash; Report options</b> for a
+window title, local overrides, or to fall back to the classic window for that one report.</li>
+</ol><aside class="note note--cla"><p class="note__t">What the swap really is</p><div class="note__b"><p>The extension sets <b>Global Properties &rarr; Classes &rarr; Report &rarr; Print Previewer</b> to <code>EmfPreviewClass</code>, and Clarion stores that value in the .app. That is why removing the template has a procedure of its own &mdash; the <a href="https://claude.ai/code/artifact/407dd75b-3ee8-4b8b-96cb-feb2955df9c6#removing">Template Guide</a> covers it, and so does the <b>Removing</b> tab on the extension itself.</p></div></aside><h2 id="demos"><span class="k">Start</span>The tests</h2><p>Two programs in the repository exercise the class, and both are useful as worked examples.</p><div class="tw"><table class=""><thead><tr><th>Folder</th><th>What it is</th></tr></thead><tbody><tr><td><code>test\EmfRptTest</code></td><td>A hand-coded probe. <code>EmfRptTest.exe</code> prints an 8-page Unicode report (mixed scripts and emoji), dumps the metafile headers and the text index to <code>pages\textindex.txt</code>, then opens the previewer. <code>EmfRptTest.exe autotest</code> also drives it through search, marks, zoom, click-mark and the wheel hook by timer and writes screenshots to <code>shots\</code>.</td></tr><tr><td><code>testapp\EmfPrvTest</code></td><td>An AppGen application built headlessly: a <code>.txd</code> dictionary and a <code>.txa</code> with one ABC Report procedure carrying both extensions. <code>ClarionCL -di</code>, <code>-ai</code>, <code>-ag</code>, then MSBuild. <code>removal.txa</code> and <code>disable.txa</code> are the regression tests for taking the template out again.</td></tr></tbody></table></div><p>Build either with the 32-bit MSBuild and the Clarion bin path:</p><pre class="code" data-lang="shell"><code>C:\Windows\Microsoft.NET\Framework\v4.0.30319\MSBuild.exe EmfRptTest.cwproj /p:ClarionBinPath=C:\Clarion12unicode\bin /p:Configuration=Debug</code></pre><h2 id="next"><span class="k">Start</span>Where to go next</h2><div class="next"><a href="https://claude.ai/code/artifact/cec9d673-cbe2-4671-9de0-3b9c3caa0c62"><b>Programmer&#x27;s Guide &rarr;</b><span>How it works, and how to bend it</span></a><a href="https://claude.ai/code/artifact/407dd75b-3ee8-4b8b-96cb-feb2955df9c6"><b>Template Guide &rarr;</b><span>Both extensions, every prompt and embed</span></a><a href="https://claude.ai/code/artifact/77beb73a-d230-4f9a-b1f9-28eace8c5d56"><b>Reference &rarr;</b><span>The classes, the queues and the equates</span></a></div>
+    <footer>EmfPreview &mdash; four volumes. The reference is generated from <code>EmfPreview.inc</code> and <code>EmfPreview.tpl</code>, so its signatures, defaults and template symbols are the ones in the build. Clarion 12 Unicode only.</footer>
+  </div>
+</main>
+</div>
+<script>
+const q = document.getElementById('filter');
+if (q) {
+  const rows = [...document.querySelectorAll('tr.fn')];
+  q.addEventListener('input', () => {
+    const t = q.value.trim().toLowerCase();
+    rows.forEach(r => r.classList.toggle('hide', t && !r.dataset.k.includes(t)));
+    document.querySelectorAll('.tw').forEach(w => {
+      const body = w.querySelector('tbody');
+      if (!body || !body.querySelector('tr.fn')) return;
+      const any = [...body.querySelectorAll('tr')].some(r => !r.classList.contains('hide'));
+      const h = w.previousElementSibling;
+      w.classList.toggle('hide', !any);
+      if (h && (h.tagName === 'H3' || h.tagName === 'P')) h.classList.toggle('hide', !any);
+    });
+  });
+}
+/*  Which sidebar entry is lit.  Position, not IntersectionObserver: one click
+    crosses several headings at once, they all arrive in one callback, and the
+    last one processed wins - which lights the wrong chapter.  */
+const links = [...document.querySelectorAll('.nav__l a')];
+if (links.length) {
+  const byId  = new Map(links.map(a => [a.getAttribute('href').slice(1), a]));
+  const marks = [...document.querySelectorAll('h2[id],h3[id]')].filter(h => byId.has(h.id));
+  const light = a => links.forEach(l => l.classList.toggle('on', l === a));
+  let held = null, holdUntil = 0, queued = false;
+  function spy() {
+    queued = false;
+    if (held) { light(held); return; }
+    let cur = marks[0];
+    for (const h of marks) { if (h.getBoundingClientRect().top <= 120) cur = h; else break; }
+    if (innerHeight + scrollY >= document.documentElement.scrollHeight - 2) cur = marks[marks.length - 1];
+    if (cur) light(byId.get(cur.id));
+  }
+  links.forEach(a => a.addEventListener('click', () => { held = a; holdUntil = performance.now() + 700; light(a); }));
+  const later = () => { if (!queued) { queued = true; requestAnimationFrame(spy); } };
+  addEventListener('scroll', () => { if (held && performance.now() > holdUntil) held = null; later(); }, {passive: true});
+  addEventListener('resize', later);
+  if (marks.length) spy();
+}
+</script>

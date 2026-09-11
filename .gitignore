@@ -28,3 +28,4 @@ testapp/roundtrip.txa
 testapp/EmfPrvTest.app
 testapp/EmfPrvTest.dct
 test/*.INI
+__pycache__/

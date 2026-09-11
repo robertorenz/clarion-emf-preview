@@ -1,4 +1,4 @@
-#TEMPLATE(EmfPreview,'EMF Unicode Previewer for Clarion 12 Unicode - v1.0'),FAMILY('ABC')
+#TEMPLATE(EmfPreview,'EMF Unicode Previewer for Clarion 12 Unicode - v1.1'),FAMILY('ABC')
 #!----------------------------------------------------------------------------
 #! EmfPreview - replaces the ABC PrintPreviewClass with EmfPreviewClass:
 #!   page thumbnail sidebar, full text search with highlighted hits, text

@@ -48,6 +48,22 @@ test/EmfRptTest.*       hand-coded probe: REPORT,UNICODE -> EMF pages, header pr
 testapp/EmfPrvTest.*    AppGen test: TXD dictionary + TXA with one ABC Report procedure, generated & built headlessly
 ```
 
+## Documentation
+
+Four linked volumes, published as pages. The Reference is generated from `src\EmfPreview.inc` and
+`src\EmfPreview.tpl` by `docsuild-docs.py`, so its signatures, defaults and template symbols are the ones in
+the build (run `python docsuild-docs.py` after changing the API; it fails loudly on a member without a worked
+example or a nav entry without a heading).
+
+| Volume | For | Link |
+|---|---|---|
+| 1. Getting Started | installing, the first preview by hand and from AppGen, the tests | [open](https://claude.ai/code/artifact/59352b0d-291b-4ec6-b073-3abb0236cf05) |
+| 2. Programmer's Guide | how pages become an index and a highlighted twin, deriving the class, the Clarion 12 Unicode notes | [open](https://claude.ai/code/artifact/cec9d673-cbe2-4671-9de0-3b9c3caa0c62) |
+| 3. Template Guide | both extensions, every prompt and default, the class swap and how to remove it | [open](https://claude.ai/code/artifact/407dd75b-3ee8-4b8b-96cb-feb2955df9c6) |
+| 4. Reference | every property, method, queue field, equate and template symbol, each with a worked line | [open](https://claude.ai/code/artifact/77beb73a-d230-4f9a-b1f9-28eace8c5d56) |
+
+The same four pages are in `docs\` as plain HTML.
+
 ## Get the code
 
 ```
